@@ -1,0 +1,94 @@
+:host {
+  display: block;
+}
+
+/* Smooth sidebar transitions */
+aside {
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Sidebar active state */
+nav a.active {
+  background-color: var(--color-primary-blue, #049ad0);
+}
+
+/* Table row hover effect */
+tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Search input animation */
+input[placeholder="Search Organization"] {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+input[placeholder="Search Organization"]:focus {
+  box-shadow: 0 0 0 3px rgba(4, 154, 208, 0.1);
+}
+
+/* Button hover effects */
+button {
+  transition: all 0.2s ease;
+}
+
+button[type="button"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Table header styling */
+thead th {
+  background-color: #f9fafb;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+}
+
+/* Edit button styling */
+button.text-primary-blue {
+  position: relative;
+  padding-bottom: 2px;
+}
+
+button.text-primary-blue::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: currentColor;
+  transition: width 0.3s ease;
+}
+
+button.text-primary-blue:hover::after {
+  width: 100%;
+}
+
+/* Mobile menu overlay */
+.fixed.inset-0.bg-black {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  aside {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+}

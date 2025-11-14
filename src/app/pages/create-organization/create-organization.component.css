@@ -1,0 +1,146 @@
+:host {
+  display: block;
+}
+
+/* Form section animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bg-white.rounded.border {
+  animation: slideDown 0.4s ease-out;
+}
+
+/* Logo upload styling */
+.relative.w-\\[120px\\].h-\\[120px\\] {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.relative.w-\\[120px\\].h-\\[120px\\]:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom input focus effects */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+select,
+textarea {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  box-shadow: 0 0 0 3px rgba(4, 154, 208, 0.1);
+}
+
+/* Checkbox customization */
+.sr-only.peer {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.peer-checked\\:bg-primary-blue {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* Label styling */
+label.flex.items-center.gap-2 {
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.2s ease;
+}
+
+label.flex.items-center.gap-2:hover {
+  opacity: 0.8;
+}
+
+/* Textarea styling */
+textarea {
+  resize: vertical;
+  min-height: 150px;
+  font-family: inherit;
+}
+
+/* Button styling with transitions */
+button[type="submit"],
+button[type="button"] {
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+button[type="submit"]:hover,
+button[type="button"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+button[type="submit"]:active,
+button[type="button"]:active {
+  transform: translateY(0);
+}
+
+/* Form sections spacing */
+form > div {
+  animation: slideDown 0.4s ease-out backwards;
+}
+
+form > div:nth-child(1) {
+  animation-delay: 0s;
+}
+
+form > div:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+form > div:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+form > div:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+/* Select dropdown arrow styling */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23434349' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+/* File input styling */
+input[type="file"] {
+  display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  form > div {
+    margin-bottom: 1rem;
+  }
+}

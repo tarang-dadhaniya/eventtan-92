@@ -1,0 +1,448 @@
+import { Component, OnInit } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { Router, RouterLink } from "@angular/router";
+import {
+  OrganizationService,
+  OrganizationData,
+} from "../../services/organization.service";
+
+@Component({
+  selector: "app-dashboard",
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
+  template: `
+    <div class="flex h-screen overflow-hidden bg-[#FCFCFE]">
+      <!-- Sidebar -->
+      <aside
+        [class.hidden]="!sidebarOpen"
+        class="w-[340px] bg-[#1E1E2D] border-r border-[#717171] flex flex-col fixed lg:static h-full z-50 lg:z-auto transition-transform lg:translate-x-0"
+        [class.-translate-x-full]="!sidebarOpen"
+      >
+        <!-- Logo -->
+        <div class="px-14 py-5">
+          <div class="text-primary-blue text-3xl font-bold">eventtan</div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-2.5 mt-8">
+          <a
+            routerLink="/dashboard"
+            class="flex items-center gap-3 h-12 px-4 rounded bg-primary-blue text-white font-medium"
+          >
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 22 22"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                opacity="0.4"
+                d="M5.60266 0.367271C6.90622 -0.122468 8.344 -0.122386 9.64758 0.367271C10.5306 0.69908 11.3328 1.35259 12.6769 2.42782L14.9689 4.26083C15.2923 4.51956 15.3448 4.99207 15.0861 5.31551C14.8273 5.63896 14.3548 5.69146 14.0314 5.4327L11.7404 3.59872C10.3111 2.45529 9.72528 1.99899 9.12024 1.77157C8.15674 1.40968 7.09348 1.4096 6.13 1.77157C5.52496 1.99902 4.93931 2.45518 3.50989 3.59872L1.21887 5.4327C0.895426 5.69146 0.422942 5.63896 0.164185 5.31551C-0.0942824 4.99208 -0.0419678 4.5195 0.281372 4.26083L2.57336 2.42782C3.91753 1.35249 4.7196 0.69912 5.60266 0.367271Z"
+                fill="white"
+              />
+              <path
+                d="M15.748 0.281395C16.0067 -0.0415339 16.4784 -0.0939334 16.8018 0.164207L17.2598 0.531395C17.6534 0.846267 17.8915 1.03525 18.1016 1.24038C19.0679 2.18466 19.6709 3.43987 19.8047 4.78432C19.8338 5.07673 19.833 5.38047 19.833 5.88491V11.2003C19.8329 14.1458 17.4455 16.5333 14.5 16.5333C13.0735 16.5332 11.9171 15.3769 11.917 13.9503V10.2833C11.9168 9.17908 11.0213 8.28352 9.91699 8.28335C8.81272 8.28353 7.91722 9.17908 7.91699 10.2833V13.9503C7.91689 15.377 6.75968 16.5333 5.33301 16.5333C2.38786 16.533 0.000105999 14.1455 0 11.2003V5.88491C-3.47768e-07 5.38049 -0.000753955 5.07672 0.0283203 4.78432C0.162093 3.43985 0.765096 2.18468 1.73145 1.24038C1.94158 1.03507 2.17939 0.846478 2.57324 0.531395L3.03125 0.164207C3.35457 -0.0944497 3.82712 -0.0417173 4.08594 0.281395C4.34469 0.604841 4.2922 1.07733 3.96875 1.33608L3.50977 1.70229C3.09226 2.0363 2.9238 2.17242 2.7793 2.31362C2.06518 3.01154 1.61939 3.93915 1.52051 4.93276C1.50052 5.13378 1.5 5.35037 1.5 5.88491V11.2003C1.50011 13.3171 3.21628 15.033 5.33301 15.0333C5.93125 15.0333 6.41689 14.5486 6.41699 13.9503V10.2833C6.41722 8.35066 7.98429 6.78353 9.91699 6.78335C11.8497 6.78352 13.4168 8.35065 13.417 10.2833V13.9503C13.4171 14.5484 13.9019 15.0332 14.5 15.0333C16.617 15.0333 18.3329 13.3173 18.333 11.2003V5.88491C18.333 5.35034 18.3325 5.13379 18.3125 4.93276C18.2136 3.93909 17.7679 3.01154 17.0537 2.31362C16.9093 2.17251 16.7406 2.03616 16.3232 1.70229L15.8652 1.33608C15.5421 1.07726 15.4894 0.604717 15.748 0.281395Z"
+                fill="white"
+              />
+            </svg>
+            <span>Dashboard</span>
+          </a>
+        </nav>
+
+        <!-- User Profile & Logout -->
+        <div class="p-4 flex items-center gap-4">
+          <div
+            class="w-10 h-10 rounded-full bg-gray-500 flex items-center justify-center text-white font-semibold"
+          >
+            U
+          </div>
+          <button
+            (click)="onLogout()"
+            class="flex-1 flex items-center gap-2 h-9 px-3 rounded border border-dashed border-[#757575] bg-[#1E1E2D] text-[#A1A5B7] hover:text-white transition-colors"
+          >
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 22 22"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                opacity="0.4"
+                d="M10.3027 0.219482C10.5955 -0.0732981 11.0704 -0.0730729 11.3633 0.219482L15.0303 3.88647C15.323 4.17938 15.3231 4.65418 15.0303 4.94702L11.3633 8.61304C11.0704 8.90578 10.5956 8.90588 10.3027 8.61304C10.0104 8.32015 10.0102 7.84523 10.3027 7.55249L12.6895 5.16675H0.75C0.336044 5.16657 0.000175416 4.8307 0 4.41675C1.32169e-05 4.00265 0.335944 3.66692 0.75 3.66675H12.6895L10.3027 1.28003C10.0103 0.987213 10.0103 0.512288 10.3027 0.219482Z"
+                fill="currentColor"
+              />
+              <path
+                d="M7.18359 0C8.29098 -1.33864e-07 9.16756 -0.000890797 9.87207 0.0566406C10.5851 0.114924 11.1893 0.236969 11.7402 0.517578C12.6337 0.972907 13.3601 1.70029 13.8154 2.59375C14.0962 3.14479 14.2181 3.74875 14.2764 4.46191C14.3339 5.16643 14.333 6.04294 14.333 7.15039V12.6836C14.333 13.791 14.3339 14.6676 14.2764 15.3721C14.2181 16.0852 14.0962 16.6892 13.8154 17.2402C13.3601 18.1337 12.6337 18.8601 11.7402 19.3154C11.1892 19.5962 10.5852 19.7181 9.87207 19.7764C9.16755 19.8339 8.29101 19.833 7.18359 19.833H5.79199C4.86161 19.833 4.28137 19.8373 3.78516 19.7344C1.93192 19.3497 0.48306 17.9012 0.0986328 16.0479C-0.00414176 15.5518 -6.66962e-07 14.972 0 14.042V13.583C0.000387448 13.1693 0.336206 12.8332 0.75 12.833C1.16397 12.833 1.49961 13.1691 1.5 13.583V14.042C1.5 15.0465 1.50374 15.4357 1.56738 15.7432C1.8304 17.0112 2.82191 18.0024 4.08984 18.2656C4.39737 18.3294 4.78673 18.333 5.79199 18.333H7.18359C8.31547 18.333 9.1198 18.3326 9.74902 18.2812C10.3693 18.2306 10.7542 18.1345 11.0586 17.9795C11.6701 17.6679 12.1679 17.1701 12.4795 16.5586C12.6345 16.2542 12.7306 15.8693 12.7812 15.249C12.8326 14.6198 12.833 13.8155 12.833 12.6836V7.15039C12.833 6.01817 12.8327 5.21328 12.7812 4.58398C12.7305 3.96365 12.6346 3.57881 12.4795 3.27441C12.1679 2.6631 11.67 2.166 11.0586 1.85449C10.7542 1.69951 10.3693 1.60244 9.74902 1.55176C9.11982 1.50041 8.31542 1.5 7.18359 1.5H5.79199C4.78672 1.5 4.39738 1.50359 4.08984 1.56738C2.82193 1.83052 1.83052 2.82193 1.56738 4.08984C1.50359 4.39738 1.5 4.78671 1.5 5.79199V6.25C1.5 6.66421 1.16421 7 0.75 7C0.335967 6.99979 -1.20023e-07 6.66408 0 6.25V5.79199C-1.38255e-06 4.86158 -0.00430153 4.28139 0.0986328 3.78516C0.483182 1.93193 1.93193 0.483182 3.78516 0.0986328C4.28139 -0.0043015 4.86158 -1.17654e-06 5.79199 0H7.18359Z"
+                fill="currentColor"
+              />
+            </svg>
+            <span class="text-sm">Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Overlay for mobile -->
+      <div
+        *ngIf="sidebarOpen"
+        (click)="toggleSidebar()"
+        class="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-40"
+      ></div>
+
+      <!-- Main Content -->
+      <main class="flex-1 flex flex-col overflow-hidden">
+        <!-- Top Header -->
+        <header
+          class="h-24 bg-white border-b border-[#ECECEC] flex items-center px-6 lg:px-8"
+        >
+          <div class="flex items-center gap-4 lg:gap-6 w-full">
+            <!-- Menu Toggle Button -->
+            <button
+              (click)="toggleSidebar()"
+              class="w-11 h-11 bg-primary-blue rounded flex items-center justify-center lg:flex hover:bg-[#0385b5] transition-colors"
+            >
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M4.5 9C4.5 8.17158 5.17158 7.5 6 7.5H30C30.8284 7.5 31.5 8.17158 31.5 9C31.5 9.82842 30.8284 10.5 30 10.5H6C5.17158 10.5 4.5 9.82842 4.5 9ZM4.5 18C4.5 17.1716 5.17158 16.5 6 16.5H21C21.8284 16.5 22.5 17.1716 22.5 18C22.5 18.8285 21.8284 19.5 21 19.5H6C5.17158 19.5 4.5 18.8285 4.5 18ZM4.5 27C4.5 26.1716 5.17158 25.5 6 25.5H13.5C14.3284 25.5 15 26.1716 15 27C15 27.8285 14.3284 28.5 13.5 28.5H6C5.17158 28.5 4.5 27.8285 4.5 27Z"
+                  fill="white"
+                />
+              </svg>
+            </button>
+
+            <!-- Breadcrumb & Title -->
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-2 text-sm text-[#5E6278]">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    opacity="0.4"
+                    d="M2.36548 1.10166C4.38277 -0.3673 7.11764 -0.367138 9.13501 1.10166C9.24369 1.1808 9.3593 1.27367 9.552 1.42783L11.219 2.76084C11.5424 3.01957 11.5949 3.49208 11.3362 3.81553C11.0774 4.13897 10.6049 4.19147 10.2815 3.93271L8.61548 2.59873C8.41099 2.43514 8.32663 2.36876 8.2522 2.31455C6.76108 1.22893 4.73933 1.22877 3.24829 2.31455C3.17382 2.36879 3.08972 2.43496 2.88501 2.59873L1.21899 3.93271C0.895548 4.19147 0.423064 4.13897 0.164307 3.81553C-0.0941452 3.49209 -0.0418402 3.01951 0.281494 2.76084L1.94849 1.42783C2.14138 1.27352 2.25674 1.18084 2.36548 1.10166Z"
+                    fill="#5E6278"
+                  />
+                  <path
+                    d="M11.498 0.281509C11.7568 -0.0415426 12.2284 -0.0940473 12.5518 0.164322L12.8848 0.430923C14.1161 1.416 14.833 2.90774 14.833 4.48463V8.34987C14.8329 10.605 13.0051 12.4339 10.75 12.4339C9.59961 12.4337 8.66707 11.5003 8.66699 10.3499V7.68385C8.66699 6.99361 8.1072 6.43403 7.41699 6.43385C6.72679 6.43403 6.16699 6.99361 6.16699 7.68385V10.3499C6.16692 11.5004 5.23356 12.4339 4.08301 12.4339C1.82819 12.4335 7.41071e-05 10.6047 0 8.34987V4.48463C0 2.90786 0.717062 1.416 1.94824 0.430923L2.28125 0.164322C2.60467 -0.0944144 3.07717 -0.0418673 3.33594 0.281509C3.59469 0.604956 3.5422 1.07744 3.21875 1.3362L2.88477 1.6028C2.00963 2.30322 1.5 3.36369 1.5 4.48463V8.34987C1.50007 9.77632 2.65662 10.9335 4.08301 10.9339C4.40513 10.9339 4.66692 10.672 4.66699 10.3499V7.68385C4.66699 6.16518 5.89836 4.93403 7.41699 4.93385C8.93563 4.93403 10.167 6.16518 10.167 7.68385V10.3499C10.1671 10.6719 10.428 10.9337 10.75 10.9339C12.1767 10.9339 13.3329 9.77654 13.333 8.34987V4.48463C13.333 3.36349 12.8237 2.30322 11.9482 1.6028L11.6152 1.3362C11.292 1.07748 11.2395 0.604904 11.498 0.281509Z"
+                    fill="#5E6278"
+                  />
+                </svg>
+                <svg
+                  width="7"
+                  height="12"
+                  viewBox="0 0 4 7"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-1 h-3"
+                >
+                  <path
+                    d="M0.146446 0.853553C-0.0488157 0.658291 -0.0488157 0.341709 0.146446 0.146447C0.341709 -0.0488155 0.658291 -0.0488155 0.853553 0.146447L3.85355 3.14645C4.04284 3.33573 4.04946 3.64053 3.86858 3.83786L1.11858 6.83786C0.931981 7.04142 0.615697 7.05517 0.412137 6.86857C0.208578 6.68198 0.194827 6.36569 0.381423 6.16213L2.80793 3.51504L0.146446 0.853553Z"
+                    fill="#5E6278"
+                  />
+                </svg>
+                <span>Dashboard</span>
+              </div>
+              <h1
+                class="text-xl lg:text-[22px] font-bold text-[#181C32] tracking-wide"
+              >
+                Eventtan Dashboard
+              </h1>
+            </div>
+          </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="flex-1 overflow-auto p-4 lg:p-8">
+          <div class="bg-white rounded border border-[#E9E9E9] overflow-hidden">
+            <!-- Table Header with Search & Create Button -->
+            <div
+              class="bg-[#FCFCFC] border-b border-[#ECECEC] p-4 lg:p-8 flex flex-col lg:flex-row gap-4 lg:justify-between lg:items-center"
+            >
+              <!-- Search Box -->
+              <div class="relative w-full lg:w-[328px]">
+                <input
+                  type="text"
+                  [(ngModel)]="searchQuery"
+                  placeholder="Search Organization"
+                  class="w-full h-12 px-5 pr-12 rounded border border-[#DADADA] bg-[#FBFBFB] text-base placeholder-[#C8C7C7] focus:outline-none focus:border-primary-blue"
+                />
+                <svg
+                  class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5"
+                  width="22"
+                  height="22"
+                  viewBox="0 0 22 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    opacity="0.4"
+                    d="M0.219727 0.219673C0.51262 -0.0732201 0.98738 -0.0732201 1.28027 0.219673L4.48828 3.42768C4.78079 3.7206 4.78105 4.19546 4.48828 4.48823C4.19552 4.78099 3.72066 4.78074 3.42773 4.48823L0.219727 1.28022C-0.0731667 0.987327 -0.0731667 0.512566 0.219727 0.219673Z"
+                    fill="#B1B1B1"
+                  />
+                  <path
+                    d="M9 0C13.9705 0 17.9998 4.02959 18 9C18 13.9706 13.9706 18 9 18C4.02959 17.9998 0 13.9705 0 9C0.000175931 4.0297 4.0297 0.000175935 9 0ZM9 1.5C4.85812 1.50018 1.50018 4.85812 1.5 9C1.5 13.142 4.85801 16.4998 9 16.5C13.1421 16.5 16.5 13.1421 16.5 9C16.4998 4.85801 13.142 1.5 9 1.5Z"
+                    fill="#B1B1B1"
+                  />
+                </svg>
+              </div>
+
+              <!-- Create Organization Button -->
+              <button
+                (click)="onCreateOrganization()"
+                class="h-12 px-6 bg-primary-blue hover:bg-[#0385b5] text-white font-bold rounded transition-colors whitespace-nowrap"
+              >
+                Create Organization
+              </button>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-[1200px]">
+                <thead class="border-b border-[#E9E9E9]">
+                  <tr>
+                    <th
+                      class="py-6 px-4 text-[#181C32] font-semibold text-base text-center"
+                    >
+                      Sr. No
+                    </th>
+                    <th
+                      class="py-6 px-4 text-[#181C32] font-semibold text-base text-left pl-12"
+                    >
+                      Organization
+                    </th>
+                    <th
+                      class="py-6 px-4 text-[#181C32] font-semibold text-base text-left pl-6"
+                    >
+                      Admin Person Name
+                    </th>
+                    <th
+                      class="py-6 px-4 text-[#181C32] font-semibold text-base text-center"
+                    >
+                      Publish Event
+                    </th>
+                    <th
+                      class="py-6 px-4 text-[#181C32] font-semibold text-base text-center"
+                    >
+                      Created Date
+                    </th>
+                    <th
+                      class="py-6 px-4 text-[#181C32] font-semibold text-base text-left pl-6"
+                    >
+                      Upcoming Event
+                    </th>
+                    <th
+                      class="py-6 px-4 text-[#181C32] font-semibold text-base text-center"
+                    >
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngIf="filteredOrganizations.length === 0">
+                    <td colspan="7" class="text-center py-20 text-[#5E6278]">
+                      No organizations found. Click "Create Organization" to get
+                      started.
+                    </td>
+                  </tr>
+                  <tr
+                    *ngFor="let org of filteredOrganizations; let i = index"
+                    class="border-b border-[#E9E9E9] hover:bg-gray-50 transition-colors"
+                  >
+                    <td
+                      class="py-4 px-4 text-[#353846] font-medium text-center"
+                    >
+                      {{ i + 1 }}
+                    </td>
+                    <td class="py-4 px-4">
+                      <div class="flex items-center gap-3 pl-8">
+                        <div
+                          class="w-[70px] h-10 rounded bg-[#F5F5F5] flex items-center justify-center flex-shrink-0 overflow-hidden"
+                        >
+                          <img
+                            *ngIf="org.logoUrl"
+                            [src]="org.logoUrl"
+                            [alt]="org.organizationName"
+                            class="w-full h-full object-contain"
+                          />
+                          <span
+                            *ngIf="!org.logoUrl"
+                            class="text-xs text-gray-400"
+                            >Logo</span
+                          >
+                        </div>
+                        <span class="text-[#353846] font-medium">{{
+                          org.organizationName
+                        }}</span>
+                      </div>
+                    </td>
+                    <td class="py-4 px-4">
+                      <div class="flex items-center gap-3 pl-2">
+                        <div
+                          class="w-[50px] h-[50px] rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold flex-shrink-0"
+                        >
+                          {{
+                            getInitials(
+                              org.personalDetails.firstName,
+                              org.personalDetails.lastName
+                            )
+                          }}
+                        </div>
+                        <div class="flex flex-col gap-0.5">
+                          <span class="text-[#353846] font-medium">
+                            {{ org.personalDetails.firstName }}
+                            {{ org.personalDetails.lastName }}
+                          </span>
+                          <span class="text-[#353846] text-xs">{{
+                            org.personalDetails.contact
+                          }}</span>
+                          <span class="text-[#353846] text-xs">{{
+                            org.personalDetails.email
+                          }}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td
+                      class="py-4 px-4 text-[#353846] font-medium text-center"
+                    >
+                      {{ org.publishedEvents }}
+                    </td>
+                    <td
+                      class="py-4 px-4 text-[#353846] font-medium text-center"
+                    >
+                      {{ org.createdDate }}
+                    </td>
+                    <td class="py-4 px-4">
+                      <div
+                        *ngIf="org.upcomingEvents.length > 0"
+                        class="flex items-center gap-3 pl-2"
+                      >
+                        <div
+                          class="w-[70px] h-10 rounded bg-[#F5F5F5] flex items-center justify-center flex-shrink-0"
+                        >
+                          <svg
+                            width="36"
+                            height="36"
+                            viewBox="0 0 36 36"
+                            fill="none"
+                          >
+                            <circle cx="18" cy="18" r="18" fill="#E8F4F8" />
+                            <path
+                              d="M18 12V18L22 22"
+                              stroke="#009FD8"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                            />
+                          </svg>
+                        </div>
+                        <span class="text-[#353846] font-medium">{{
+                          org.upcomingEvents[0].name
+                        }}</span>
+                      </div>
+                      <span
+                        *ngIf="org.upcomingEvents.length === 0"
+                        class="text-gray-400 text-sm pl-2"
+                        >No events</span
+                      >
+                    </td>
+                    <td class="py-4 px-4">
+                      <div class="flex justify-center">
+                        <button
+                          (click)="onViewOrganization(org)"
+                          class="w-10 h-10 rounded-full bg-primary-blue hover:bg-[#0385b5] flex items-center justify-center transition-colors"
+                        >
+                          <svg
+                            width="20"
+                            height="14"
+                            viewBox="0 0 20 14"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M19.9245 6.6663C18.252 3.16082 14.4489 0 10 0C4.99419 0 1.39604 3.89848 0.0754883 6.6663C-0.0248233 6.87744 -0.0248233 7.12256 0.0754883 7.33369C1.74801 10.8392 5.55109 14 10 14C15.0058 14 18.604 10.1014 19.9245 7.33369C20.0252 7.12256 20.0252 6.87744 19.9245 6.6663ZM10 12.4444C6.40077 12.4444 3.41663 10.083 1.66613 7C3.40927 3.92963 6.39162 1.55556 10 1.55556C13.5989 1.55556 16.5834 3.91667 18.3339 7C16.5907 10.0702 13.6084 12.4444 10 12.4444ZM10 3.11111C7.84607 3.11111 6.09375 4.85556 6.09375 7C6.09375 9.14444 7.84607 10.8889 10 10.8889C12.1539 10.8889 13.9062 9.14444 13.9062 7C13.9062 4.85556 12.1539 3.11111 10 3.11111ZM10 9.33333C8.70771 9.33333 7.65625 8.28646 7.65625 7C7.65625 5.71333 8.70771 4.66667 10 4.66667C11.2924 4.66667 12.3438 5.71333 12.3438 7C12.3438 8.28646 11.2924 9.33333 10 9.33333Z"
+                              fill="white"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  `,
+  styles: [],
+})
+export class DashboardComponent implements OnInit {
+  sidebarOpen = false;
+  searchQuery = "";
+  organizations: OrganizationData[] = [];
+
+  constructor(
+    private router: Router,
+    private organizationService: OrganizationService,
+  ) {}
+
+  ngOnInit() {
+    this.loadOrganizations();
+    this.organizationService.organizations$.subscribe((orgs) => {
+      this.organizations = orgs;
+    });
+  }
+
+  loadOrganizations() {
+    this.organizations = this.organizationService.getOrganizations();
+  }
+
+  get filteredOrganizations(): OrganizationData[] {
+    if (!this.searchQuery) {
+      return this.organizations;
+    }
+    const query = this.searchQuery.toLowerCase();
+    return this.organizations.filter(
+      (org) =>
+        org.organizationName.toLowerCase().includes(query) ||
+        org.personalDetails.firstName.toLowerCase().includes(query) ||
+        org.personalDetails.lastName.toLowerCase().includes(query) ||
+        org.personalDetails.email.toLowerCase().includes(query),
+    );
+  }
+
+  getInitials(firstName: string, lastName: string): string {
+    const first = firstName ? firstName.charAt(0).toUpperCase() : "";
+    const last = lastName ? lastName.charAt(0).toUpperCase() : "";
+    return `${first}${last}` || "U";
+  }
+
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  onCreateOrganization() {
+    this.router.navigate(["/create-organization"]);
+  }
+
+  onViewOrganization(org: OrganizationData) {
+    console.log("Viewing organization:", org);
+    alert(`Viewing ${org.organizationName}`);
+  }
+
+  onLogout() {
+    this.router.navigate(["/"]);
+  }
+}
