@@ -1190,7 +1190,7 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
 
                     <!-- Drag to Add Message -->
                     <div
-                      class="absolute left-1/2 bottom-1/2 -translate-x-1/2 translate-y-1/2 flex items-center gap-2"
+                      class="absolute left-1/2 bottom-[10%] -translate-x-1/2 translate-y-1/2 flex items-center gap-2"
                     >
                       <svg
                         width="24"
