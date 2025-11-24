@@ -1309,14 +1309,104 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
                 </div>
               </div>
 
-              <!-- Features Content Tab (Placeholder) -->
+              <!-- Features Content Tab -->
               <div
                 *ngIf="currentTab === 'content'"
-                class="bg-white rounded shadow-md border border-[#E9E9E9] p-4 md:p-6 lg:p-8"
+                class="bg-white rounded shadow-md border border-[#E9E9E9]"
               >
-                <p class="text-center text-[#686868] py-12">
-                  Features Content Tab - Coming Soon
-                </p>
+                <!-- Selected Features Tabs -->
+                <div class="border-b border-[#CED4DA]">
+                  <div class="flex items-center gap-0 px-8 pt-8">
+                    <button
+                      *ngFor="let featureId of activeFeatures; let i = index"
+                      [class.active-feature-tab]="i === selectedFeatureIndex"
+                      (click)="selectedFeatureIndex = i"
+                      class="relative flex items-center gap-2 px-6 py-2.5 bg-white border border-[#CED4DA] shadow-sm transition-all hover:bg-gray-50"
+                      [ngClass]="{
+                        'bg-[#009FD8] text-white border-[#009FD8]':
+                          i === selectedFeatureIndex,
+                        'bg-white text-[#686868] border-[#CED4DA]':
+                          i !== selectedFeatureIndex,
+                        'rounded-l': i === 0 && i !== selectedFeatureIndex,
+                        'rounded-r':
+                          i === activeFeatures.length - 1 &&
+                          i !== selectedFeatureIndex,
+                        rounded:
+                          i === selectedFeatureIndex ||
+                          (i === 0 && i === activeFeatures.length - 1),
+                      }"
+                    >
+                      <div
+                        [innerHTML]="getFeatureTabIcon(featureId, i)"
+                        class="w-6 h-6"
+                      ></div>
+                      <span class="text-sm md:text-base font-normal">
+                        {{ getFeatureLabel(featureId) }}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Content Area -->
+                <div class="p-8" style="min-height: 400px;">
+                  <div
+                    class="flex flex-col items-center justify-center py-16 text-center"
+                  >
+                    <div
+                      class="w-16 h-16 mb-6 flex items-center justify-center"
+                      [innerHTML]="
+                        getFeatureIcon(activeFeatures[selectedFeatureIndex])
+                      "
+                    ></div>
+                    <h3 class="text-xl font-semibold text-[#181C32] mb-2">
+                      {{
+                        getFeatureLabel(activeFeatures[selectedFeatureIndex])
+                      }}
+                      Content
+                    </h3>
+                    <p class="text-base text-[#686868] max-w-md">
+                      Configure the content for
+                      {{
+                        getFeatureLabel(activeFeatures[selectedFeatureIndex])
+                      }}
+                      feature here.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Footer with divider and Next button -->
+                <div
+                  class="px-8 py-6 border-t border-[#CED4DA] flex justify-end"
+                >
+                  <button
+                    (click)="onNext()"
+                    class="flex items-center gap-2 px-5 py-2 bg-[#009FD8] hover:bg-[#0385b5] text-white rounded font-semibold transition-colors"
+                  >
+                    <span>Next</span>
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 18 18"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M3.75 9H14.25"
+                        stroke="white"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M9 3.75L14.25 9L9 14.25"
+                        stroke="white"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -1337,6 +1427,16 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
 
       .feature-active span {
         color: white !important;
+      }
+
+      .active-feature-tab {
+        background-color: #009fd8 !important;
+        color: white !important;
+        border-color: #009fd8 !important;
+      }
+
+      .active-feature-tab svg path {
+        fill: white !important;
       }
     `,
   ],
@@ -1368,9 +1468,17 @@ export class EventSetupComponent implements OnInit {
   logoPreview: string | null = null;
   bannerPreview: string | null = null;
 
-  activeFeatures: string[] = ["schedule"];
+  activeFeatures: string[] = [
+    "schedule",
+    "exhibitor",
+    "about",
+    "information",
+    "speakers",
+    "sponsors",
+  ];
   draggedFeatureId: string | null = null;
   isDragOverSelected = false;
+  selectedFeatureIndex = 0;
 
   inactiveFeatures = [
     {
@@ -1684,6 +1792,46 @@ export class EventSetupComponent implements OnInit {
     if (feature) {
       const iconWithBlueColor = feature.icon.replace(/#686868/g, "#049AD0");
       return this.getSafeHtml(iconWithBlueColor);
+    }
+    return this.getSafeHtml("");
+  }
+
+  getFeatureTabIcon(featureId: string, index: number): SafeHtml {
+    const isActive = index === this.selectedFeatureIndex;
+    const color = isActive ? "#FFFFFF" : "#686868";
+
+    if (featureId === "schedule") {
+      return this
+        .getSafeHtml(`<svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#clip0_1494_18783)">
+          <path d="M19.4219 1.71875H18.3906V0H16.6719V1.71875H5.32812V0H3.60938V1.71875H2.57812C1.15655 1.71875 0 2.8753 0 4.29688V19.4219C0 20.8435 1.15655 22 2.57812 22H19.4219C20.8435 22 22 20.8435 22 19.4219V4.29688C22 2.8753 20.8435 1.71875 19.4219 1.71875ZM20.2812 19.4219C20.2812 19.8957 19.8957 20.2812 19.4219 20.2812H2.57812C2.10427 20.2812 1.71875 19.8957 1.71875 19.4219V8.07812H20.2812V19.4219ZM20.2812 6.35938H1.71875V4.29688C1.71875 3.82302 2.10427 3.4375 2.57812 3.4375H3.60938V5.15625H5.32812V3.4375H16.6719V5.15625H18.3906V3.4375H19.4219C19.8957 3.4375 20.2812 3.82302 20.2812 4.29688V6.35938Z" fill="${color}"/>
+          <path d="M4.98438 9.88281H3.26562V11.6016H4.98438V9.88281Z" fill="${color}"/>
+          <path d="M8.42188 9.88281H6.70312V11.6016H8.42188V9.88281Z" fill="${color}"/>
+          <path d="M11.8594 9.88281H10.1406V11.6016H11.8594V9.88281Z" fill="${color}"/>
+          <path d="M15.2969 9.88281H13.5781V11.6016H15.2969V9.88281Z" fill="${color}"/>
+          <path d="M18.7344 9.88281H17.0156V11.6016H18.7344V9.88281Z" fill="${color}"/>
+          <path d="M4.98438 13.3203H3.26562V15.0391H4.98438V13.3203Z" fill="${color}"/>
+          <path d="M8.42188 13.3203H6.70312V15.0391H8.42188V13.3203Z" fill="${color}"/>
+          <path d="M11.8594 13.3203H10.1406V15.0391H11.8594V13.3203Z" fill="${color}"/>
+          <path d="M15.2969 13.3203H13.5781V15.0391H15.2969V13.3203Z" fill="${color}"/>
+          <path d="M4.98438 16.7578H3.26562V18.4766H4.98438V16.7578Z" fill="${color}"/>
+          <path d="M8.42188 16.7578H6.70312V18.4766H8.42188V16.7578Z" fill="${color}"/>
+          <path d="M11.8594 16.7578H10.1406V18.4766H11.8594V16.7578Z" fill="${color}"/>
+          <path d="M15.2969 16.7578H13.5781V18.4766H15.2969V16.7578Z" fill="${color}"/>
+          <path d="M18.7344 13.3203H17.0156V15.0391H18.7344V13.3203Z" fill="${color}"/>
+        </g>
+        <defs>
+          <clipPath id="clip0_1494_18783">
+            <rect width="22" height="22" fill="white"/>
+          </clipPath>
+        </defs>
+      </svg>`);
+    }
+
+    const feature = this.inactiveFeatures.find((f) => f.id === featureId);
+    if (feature) {
+      const iconWithColor = feature.icon.replace(/#686868/g, color);
+      return this.getSafeHtml(iconWithColor);
     }
     return this.getSafeHtml("");
   }
