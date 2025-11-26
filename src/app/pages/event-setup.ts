@@ -1979,7 +1979,7 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
                       <h2
                         class="text-xl md:text-2xl font-medium text-[#686868]"
                       >
-                        {{ aboutTitle || ("About " + eventName) }}
+                        {{ aboutTitle || "About " + eventName }}
                       </h2>
                       <button
                         (click)="editAboutContent = true"
@@ -2002,7 +2002,9 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
                     </div>
 
                     <!-- Content -->
-                    <div class="px-6 md:px-8 py-6 max-h-[400px] overflow-y-auto">
+                    <div
+                      class="px-6 md:px-8 py-6 max-h-[400px] overflow-y-auto"
+                    >
                       <p
                         class="text-sm md:text-base text-[#353846] leading-6 md:leading-7 whitespace-pre-wrap"
                       >
@@ -2119,7 +2121,9 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
                   <button
                     (click)="onNext()"
                     class="flex items-center gap-2 px-5 py-2 bg-[#009FD8] hover:bg-[#0385b5] text-white rounded font-semibold transition-colors"
-                    [disabled]="selectedFeatureIndex >= activeFeatures.length - 1"
+                    [disabled]="
+                      selectedFeatureIndex >= activeFeatures.length - 1
+                    "
                     [ngClass]="{
                       'opacity-50 cursor-not-allowed':
                         selectedFeatureIndex >= activeFeatures.length - 1,
@@ -2248,8 +2252,7 @@ export class EventSetupComponent implements OnInit {
   isDeleteModalOpen = false;
   scheduleToDelete: string | null = null;
   exhibitorToDelete: string | null = null;
-  aboutTitle: string =
-    "About ENGIMACH 2023";
+  aboutTitle: string = "About ENGIMACH 2023";
   aboutDescription: string =
     "After the rousing success of the 2021 edition, the expectations from ENGIMACH 2023 have also risen. India is the only large economy expected to grow significantly in the coming years. India is also fast emerging as a preferred manufacturing base in a world seeking reliable supply chains. On the other hand, Indian industry seeks more foreign investments, technology, exports and domestic demand. In this context, ENGIMACH 2023 is expected to be a major catalyst of economic growth and generate significant and lasting business outcomes.";
 
