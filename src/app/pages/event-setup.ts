@@ -2256,6 +2256,10 @@ export class EventSetupComponent implements OnInit {
   isDeleteModalOpen = false;
   scheduleToDelete: string | null = null;
   exhibitorToDelete: string | null = null;
+  aboutTitle: string =
+    "About ENGIMACH 2023";
+  aboutDescription: string =
+    "After the rousing success of the 2021 edition, the expectations from ENGIMACH 2023 have also risen. India is the only large economy expected to grow significantly in the coming years. India is also fast emerging as a preferred manufacturing base in a world seeking reliable supply chains. On the other hand, Indian industry seeks more foreign investments, technology, exports and domestic demand. In this context, ENGIMACH 2023 is expected to be a major catalyst of economic growth and generate significant and lasting business outcomes.";
 
   activeFeatures: string[] = [
     "schedule",
