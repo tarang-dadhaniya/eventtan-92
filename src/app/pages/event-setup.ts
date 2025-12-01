@@ -12,8 +12,13 @@ import { AddScheduleModalComponent } from "../components/add-schedule-modal";
 import { AddExhibitorModalComponent } from "../components/add-exhibitor-modal";
 import { ConfirmDeleteModalComponent } from "../components/confirm-delete-modal";
 import { AboutDetailModalComponent } from "../components/about-detail-modal";
+import { AddInformationModalComponent } from "../components/add-information-modal";
 import { ScheduleService, Schedule } from "../services/schedule.service";
 import { ExhibitorService, Exhibitor } from "../services/exhibitor.service";
+import {
+  InformationService,
+  Information,
+} from "../services/information.service";
 
 const DASHBOARD_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.4" fill-rule="evenodd" clip-rule="evenodd" d="M9.11972 1.77151C8.15614 1.4095 7.09392 1.4095 6.13033 1.77151C5.5251 1.99889 4.94006 2.45532 3.51022 3.59919L1.21855 5.43253C0.895102 5.69128 0.423133 5.63884 0.164376 5.3154C-0.0943811 4.99195 -0.0419401 4.51998 0.281506 4.26122L2.57317 2.42789C2.61283 2.39616 2.65202 2.36481 2.69075 2.33381C3.96492 1.31414 4.74565 0.689359 5.6028 0.367335C6.90647 -0.122445 8.34359 -0.122445 9.64726 0.367335C10.5044 0.689359 11.2851 1.31414 12.5593 2.33381C12.598 2.3648 12.6372 2.39616 12.6769 2.42789L14.9685 4.26122C15.292 4.51998 15.3444 4.99195 15.0857 5.3154C14.8269 5.63884 14.355 5.69128 14.0315 5.43253L11.7398 3.59919C10.31 2.45532 9.72496 1.99889 9.11972 1.77151Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M4.08565 0.281506C4.34441 0.604953 4.29197 1.07692 3.96852 1.33568L3.51019 1.70235C3.09253 2.03647 2.92421 2.17224 2.77968 2.31347C2.06537 3.01148 1.61969 3.93876 1.52086 4.93259C1.50087 5.13368 1.5 5.34993 1.5 5.88479V11.2C1.5 13.3171 3.21624 15.0334 5.33334 15.0334C5.93164 15.0334 6.41667 14.5483 6.41667 13.95V10.2833C6.41667 8.35031 7.98367 6.78331 9.91667 6.78331C11.8497 6.78331 13.4167 8.35031 13.4167 10.2833V13.95C13.4167 14.5483 13.9017 15.0334 14.5 15.0334C16.6171 15.0334 18.3333 13.3171 18.3333 11.2V5.88479C18.3333 5.34993 18.3325 5.13368 18.3125 4.93259C18.2136 3.93876 17.7679 3.01148 17.0536 2.31347C16.9091 2.17224 16.7408 2.03647 16.3231 1.70235L15.8648 1.33568C15.5413 1.07692 15.4889 0.604953 15.7477 0.281506C16.0064 -0.0419405 16.4784 -0.0943815 16.8018 0.164376L17.2748 0.541868C17.6571 0.856916 17.886 1.04452 18.0782 1.23375C19.0199 2.16224 19.5996 3.40171 19.7171 4.72041C19.7394 4.94668 19.7496 5.18893 19.7543 5.59686L19.75 5.88479V11.2C19.75 14.0997 17.3997 16.45 14.5 16.45C13.1193 16.45 11.9167 15.2473 11.9167 13.8667V10.2C11.9167 9.19579 11.087 8.38331 10.0667 8.38331C9.04634 8.38331 8.21667 9.19579 8.21667 10.2V13.8667C8.21667 15.2473 7.01401 16.45 5.63334 16.45C2.73357 16.45 0.383333 14.0997 0.383333 11.2V5.88479L0.379004 5.59686C0.383737 5.18893 0.393911 4.94668 0.416226 4.72041C0.533719 3.40171 1.11338 2.16224 2.05508 1.23375C2.24733 1.04452 2.47622 0.856916 2.85854 0.541868L3.33152 0.164376C3.65497 -0.0943815 4.12694 -0.0419405 4.38565 0.281506Z" fill="white"/></svg>`;
 
@@ -32,6 +37,7 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
     AddExhibitorModalComponent,
     ConfirmDeleteModalComponent,
     AboutDetailModalComponent,
+    AddInformationModalComponent,
   ],
   template: `
     <div class="flex h-screen overflow-hidden bg-main-bg">
@@ -2014,12 +2020,221 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
                   </div>
 
                   <!-- Other Features Placeholder -->
+                  <!-- Information Content -->
+                  <div
+                    *ngIf="
+                      activeFeatures.length > 0 &&
+                      activeFeatures[selectedFeatureIndex] === 'information'
+                    "
+                  >
+                    <div class="flex flex-col gap-0">
+                      <!-- Header Container with Title and Controls -->
+                      <div
+                        class="bg-[#F5F5F5] border border-[#CED4DA] rounded-t-md"
+                      >
+                        <div
+                          class="flex items-center justify-between px-6 py-4 gap-6"
+                        >
+                          <h2
+                            class="text-xl font-medium text-[#686868] whitespace-nowrap"
+                          >
+                            Information
+                          </h2>
+
+                          <div
+                            class="flex-1 flex items-center justify-end gap-3"
+                          >
+                            <!-- Search Bar -->
+                            <div class="relative">
+                              <input
+                                type="text"
+                                placeholder="Search"
+                                [(ngModel)]="searchQuery"
+                                class="h-11 pl-5 pr-11 border border-[#DADADA] rounded text-base font-medium placeholder-[#878A99] focus:outline-none focus:border-[#049AD0] bg-[#FBFBFB] transition-colors"
+                                style="width: 220px;"
+                              />
+                              <svg
+                                class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#B1B1B1] pointer-events-none"
+                                fill="none"
+                                viewBox="0 0 18 18"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M9 0C13.9705 0 17.9998 4.02959 18 9C18 13.9706 13.9706 18 9 18C4.02959 17.9998 0 13.9705 0 9C0.000175931 4.0297 4.0297 0.000175935 9 0ZM9 1.5C4.85812 1.50018 1.50018 4.85812 1.5 9C1.5 13.142 4.85801 16.4998 9 16.5C13.1421 16.5 16.5 13.1421 16.5 9C16.4998 4.85801 13.142 1.5 9 1.5Z"
+                                  fill="currentColor"
+                                />
+                              </svg>
+                            </div>
+
+                            <!-- Add Information Button -->
+                            <button
+                              (click)="openInformationModal()"
+                              class="flex items-center gap-2 px-4 h-11 border border-[#049AD0] rounded font-semibold text-sm text-white bg-[#009FD8] hover:bg-[#0385b5] transition-colors whitespace-nowrap"
+                            >
+                              <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M12 5V19"
+                                  stroke="white"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                />
+                                <path
+                                  d="M5 12H19"
+                                  stroke="white"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                />
+                              </svg>
+                              <span>Add Information</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Table -->
+                      <div
+                        class="border border-[#CED4DA] border-t-0 rounded-b-md overflow-hidden"
+                      >
+                        <!-- Table Header Row -->
+                        <div
+                          class="bg-white border-b border-[#CED4DA] grid grid-cols-[70px_1fr_150px_200px_100px] px-6 py-4 gap-4"
+                        >
+                          <div
+                            class="text-[#181C32] font-bold text-base text-center"
+                          >
+                            Sr. No
+                          </div>
+                          <div class="text-[#181C32] font-bold text-base">
+                            Title
+                          </div>
+                          <div
+                            class="text-[#181C32] font-bold text-base text-center"
+                          >
+                            Type
+                          </div>
+                          <div
+                            class="text-[#181C32] font-bold text-base text-center"
+                          >
+                            Floor Plan Type
+                          </div>
+                          <div
+                            class="text-[#181C32] font-bold text-base text-center"
+                          >
+                            Action
+                          </div>
+                        </div>
+
+                        <!-- Table Body -->
+                        <div
+                          *ngIf="information.length === 0"
+                          class="bg-white min-h-80 flex items-center justify-center"
+                        >
+                          <div class="text-center py-12">
+                            <p class="text-[#878A99] text-lg">
+                              No information available. Click "Add Information"
+                              to get started.
+                            </p>
+                          </div>
+                        </div>
+
+                        <!-- Information Rows -->
+                        <div
+                          *ngFor="let info of information; let i = index"
+                          class="bg-white border-b border-[#E9E9E9] last:border-b-0 grid grid-cols-[70px_1fr_150px_200px_100px] px-6 py-4 gap-4 items-center hover:bg-gray-50 transition-colors"
+                        >
+                          <div
+                            class="text-[#353846] font-semibold text-base text-center"
+                          >
+                            {{ i + 1 }}
+                          </div>
+                          <div class="text-[#353846] font-semibold text-base">
+                            {{ info.title }}
+                          </div>
+                          <div
+                            class="text-[#353846] font-semibold text-base text-center"
+                          >
+                            {{ info.type }}
+                          </div>
+                          <div
+                            class="text-[#353846] font-semibold text-base text-center capitalize"
+                          >
+                            {{ info.floorPlanFor }}
+                          </div>
+                          <div class="flex gap-3 justify-center">
+                            <button
+                              (click)="editInformation(info)"
+                              class="w-10 h-10 rounded-full bg-[#009FD8] flex items-center justify-center hover:bg-[#0385b5] transition-colors"
+                              title="Edit"
+                            >
+                              <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M19.1484 1.64032L19.1255 1.61947C18.6882 1.21999 18.1213 1 17.5293 1C16.8656 1 16.2283 1.28101 15.7809 1.77084L7.3204 11.0332C7.24331 11.1177 7.18477 11.2173 7.14874 11.3257L6.15387 14.308C6.03877 14.6528 6.09659 15.0342 6.30823 15.328C6.52161 15.6242 6.86542 15.801 7.22789 15.801C7.38472 15.801 7.53804 15.7688 7.68334 15.7052L10.5637 14.4451C10.6684 14.3993 10.7624 14.332 10.8394 14.2476L19.2999 4.98524C20.1803 4.02143 20.1124 2.521 19.1484 1.64032ZM8.05986 13.7571L8.64367 12.0071L8.6929 11.9532L9.79926 12.9637L9.75004 13.0177L8.05986 13.7571ZM18.0936 3.88334L10.9012 11.7575L9.79482 10.7469L16.9872 2.87274C17.1279 2.71867 17.3204 2.63378 17.5293 2.63378C17.7126 2.63378 17.8881 2.70197 18.0239 2.82604L18.0468 2.84689C18.3454 3.11968 18.3664 3.58463 18.0936 3.88334Z"
+                                  fill="white"
+                                />
+                                <path
+                                  d="M17.5065 8.53653C17.0553 8.53653 16.6896 8.90229 16.6896 9.3534V16.2887C16.6896 17.4343 15.7576 18.3662 14.6121 18.3662H4.71125C3.56569 18.3662 2.63378 17.4343 2.63378 16.2887V6.46844C2.63378 5.32288 3.56584 4.39097 4.71125 4.39097H11.8775C12.3287 4.39097 12.6944 4.02506 12.6944 3.57397C12.6944 3.12288 12.3287 2.75708 11.8775 2.75708H4.71125C2.66483 2.75708 1 4.42198 1 6.46844V16.2887C1 18.3351 2.66483 20 4.71125 20H14.612C16.6584 20 18.3233 18.3351 18.3233 16.2887V9.3534C18.3234 8.90229 17.9576 8.53653 17.5065 8.53653Z"
+                                  fill="white"
+                                />
+                              </svg>
+                            </button>
+                            <button
+                              (click)="deleteInformation(info.id)"
+                              class="w-10 h-10 rounded-full bg-[#BF0505] flex items-center justify-center hover:bg-[#a00404] transition-colors"
+                              title="Delete"
+                            >
+                              <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M15.834 5.83325C15.613 5.83325 15.401 5.92105 15.2447 6.07733C15.0884 6.23361 15.0007 6.44557 15.0007 6.66659V15.9924C14.9767 16.4138 14.7873 16.8087 14.4736 17.0911C14.1598 17.3734 13.7472 17.5204 13.3257 17.4999H6.67565C6.25406 17.5204 5.84147 17.3734 5.52774 17.0911C5.21401 16.8087 5.02456 16.4138 5.00065 15.9924V6.66659C5.00065 6.44557 4.91285 6.23361 4.75657 6.07733C4.60029 5.92105 4.38833 5.83325 4.16732 5.83325C3.9463 5.83325 3.73434 5.92105 3.57806 6.07733C3.42178 6.23361 3.33398 6.44557 3.33398 6.66659V15.9924C3.35777 16.8559 3.7228 17.6748 4.34913 18.2698C4.97547 18.8647 5.81204 19.1872 6.67565 19.1666H13.3257C14.1893 19.1872 15.0258 18.8647 15.6522 18.2698C16.2785 17.6748 16.6435 16.8559 16.6673 15.9924V6.66659C16.6673 6.44557 16.5795 6.23361 16.4232 6.07733C16.267 5.92105 16.055 5.83325 15.834 5.83325Z"
+                                  fill="white"
+                                />
+                                <path
+                                  d="M16.6667 3.33325H13.3333V1.66659C13.3333 1.44557 13.2455 1.23361 13.0893 1.07733C12.933 0.921049 12.721 0.833252 12.5 0.833252H7.5C7.27899 0.833252 7.06702 0.921049 6.91074 1.07733C6.75446 1.23361 6.66667 1.44557 6.66667 1.66659V3.33325H3.33333C3.11232 3.33325 2.90036 3.42105 2.74408 3.57733C2.5878 3.73361 2.5 3.94557 2.5 4.16659C2.5 4.3876 2.5878 4.59956 2.74408 4.75584C2.90036 4.91212 3.11232 4.99992 3.33333 4.99992H16.6667C16.8877 4.99992 17.0996 4.91212 17.2559 4.75584C17.4122 4.59956 17.5 4.3876 17.5 4.16659C17.5 3.94557 17.4122 3.73361 17.2559 3.57733C17.0996 3.42105 16.8877 3.33325 16.6667 3.33325ZM8.33333 3.33325V2.49992H11.6667V3.33325H8.33333Z"
+                                  fill="white"
+                                />
+                                <path
+                                  d="M9.16667 14.1667V8.33333C9.16667 8.11232 9.07887 7.90036 8.92259 7.74408C8.76631 7.5878 8.55435 7.5 8.33333 7.5C8.11232 7.5 7.90036 7.5878 7.74408 7.74408C7.5878 7.90036 7.5 8.11232 7.5 8.33333V14.1667C7.5 14.3877 7.5878 14.5996 7.74408 14.7559C7.90036 14.9122 8.11232 15 8.33333 15C8.55435 15 8.76631 14.9122 8.92259 14.7559C9.07887 14.5996 9.16667 14.3877 9.16667 14.1667Z"
+                                  fill="white"
+                                />
+                                <path
+                                  d="M12.5007 14.1667V8.33333C12.5007 8.11232 12.4129 7.90036 12.2566 7.74408C12.1003 7.5878 11.8883 7.5 11.6673 7.5C11.4463 7.5 11.2343 7.5878 11.0781 7.74408C10.9218 7.90036 10.834 8.11232 10.834 8.33333V14.1667C10.834 14.3877 10.9218 14.5996 11.0781 14.7559C11.2343 14.9122 11.4463 15 11.6673 15C11.8883 15 12.1003 14.9122 12.2566 14.7559C12.4129 14.5996 12.5007 14.3877 12.5007 14.1667Z"
+                                  fill="white"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Other Features Placeholder -->
                   <div
                     *ngIf="
                       activeFeatures.length > 0 &&
                       activeFeatures[selectedFeatureIndex] !== 'schedule' &&
                       activeFeatures[selectedFeatureIndex] !== 'exhibitor' &&
-                      activeFeatures[selectedFeatureIndex] !== 'about'
+                      activeFeatures[selectedFeatureIndex] !== 'about' &&
+                      activeFeatures[selectedFeatureIndex] !== 'information'
                     "
                     class="flex flex-col items-center justify-center py-16 text-center"
                   >
@@ -2193,6 +2408,15 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
       (close)="editAboutContent = false"
       (save)="onAboutSave($event)"
     ></app-about-detail-modal>
+
+    <!-- Add Information Modal -->
+    <app-add-information-modal
+      [isOpen]="isInformationModalOpen"
+      [editMode]="editModeInformation"
+      [informationData]="editingInformation"
+      (close)="closeInformationModal()"
+      (save)="onInformationSave($event)"
+    ></app-add-information-modal>
   `,
   styles: [
     `
@@ -2240,18 +2464,23 @@ export class EventSetupComponent implements OnInit {
 
   isScheduleModalOpen = false;
   isExhibitorModalOpen = false;
+  isInformationModalOpen = false;
   editAboutContent = false;
   eventId: string = "";
   schedules: Schedule[] = [];
   exhibitors: Exhibitor[] = [];
+  information: Information[] = [];
   searchQuery: string = "";
   editMode = false;
   editModeExhibitor = false;
+  editModeInformation = false;
   editingSchedule: any = null;
   editingExhibitor: any = null;
+  editingInformation: any = null;
   isDeleteModalOpen = false;
   scheduleToDelete: string | null = null;
   exhibitorToDelete: string | null = null;
+  informationToDelete: string | null = null;
   aboutTitle: string = "About ENGIMACH 2023";
   aboutDescription: string =
     "After the rousing success of the 2021 edition, the expectations from ENGIMACH 2023 have also risen. India is the only large economy expected to grow significantly in the coming years. India is also fast emerging as a preferred manufacturing base in a world seeking reliable supply chains. On the other hand, Indian industry seeks more foreign investments, technology, exports and domestic demand. In this context, ENGIMACH 2023 is expected to be a major catalyst of economic growth and generate significant and lasting business outcomes.";
@@ -2412,6 +2641,7 @@ export class EventSetupComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private scheduleService: ScheduleService,
     private exhibitorService: ExhibitorService,
+    private informationService: InformationService,
   ) {}
 
   getSafeHtml(html: string): SafeHtml {
@@ -2429,6 +2659,7 @@ export class EventSetupComponent implements OnInit {
 
     this.loadSchedules();
     this.loadExhibitors();
+    this.loadInformation();
 
     this.updateActiveRoute();
 
@@ -2759,6 +2990,9 @@ export class EventSetupComponent implements OnInit {
     } else if (this.exhibitorToDelete) {
       this.exhibitorService.deleteExhibitor(this.exhibitorToDelete);
       this.loadExhibitors();
+    } else if (this.informationToDelete) {
+      this.informationService.deleteInformation(this.informationToDelete);
+      this.loadInformation();
     }
     this.closeDeleteModal();
   }
@@ -2767,6 +3001,7 @@ export class EventSetupComponent implements OnInit {
     this.isDeleteModalOpen = false;
     this.scheduleToDelete = null;
     this.exhibitorToDelete = null;
+    this.informationToDelete = null;
   }
 
   openExhibitorModal() {
@@ -2847,6 +3082,48 @@ export class EventSetupComponent implements OnInit {
     const ampm = hour >= 12 ? "PM" : "AM";
     const displayHour = hour % 12 || 12;
     return `${displayHour.toString().padStart(2, "0")}:${minutes} ${ampm}`;
+  }
+
+  openInformationModal() {
+    this.editModeInformation = false;
+    this.editingInformation = null;
+    this.isInformationModalOpen = true;
+  }
+
+  closeInformationModal() {
+    this.isInformationModalOpen = false;
+    this.editModeInformation = false;
+    this.editingInformation = null;
+  }
+
+  onInformationSave(informationData: any) {
+    if (this.editModeInformation && this.editingInformation) {
+      this.informationService.updateInformation(
+        this.editingInformation.id,
+        informationData,
+      );
+    } else {
+      this.informationService.addInformation(this.eventId, informationData);
+    }
+    this.loadInformation();
+    this.closeInformationModal();
+  }
+
+  loadInformation() {
+    this.information = this.informationService.getInformationByEvent(
+      this.eventId,
+    );
+  }
+
+  editInformation(info: Information) {
+    this.editModeInformation = true;
+    this.editingInformation = info;
+    this.isInformationModalOpen = true;
+  }
+
+  deleteInformation(id: string) {
+    this.informationToDelete = id;
+    this.isDeleteModalOpen = true;
   }
 
   getInitials(name: string): string {
