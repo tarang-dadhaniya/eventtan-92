@@ -3194,6 +3194,9 @@ export class EventSetupComponent implements OnInit {
     } else if (this.exhibitorToDelete) {
       this.exhibitorService.deleteExhibitor(this.exhibitorToDelete);
       this.loadExhibitors();
+    } else if (this.speakerToDelete) {
+      this.speakerService.deleteSpeaker(this.speakerToDelete);
+      this.loadSpeakers();
     } else if (this.informationToDelete) {
       this.informationService.deleteInformation(this.informationToDelete);
       this.loadInformation();
@@ -3205,6 +3208,7 @@ export class EventSetupComponent implements OnInit {
     this.isDeleteModalOpen = false;
     this.scheduleToDelete = null;
     this.exhibitorToDelete = null;
+    this.speakerToDelete = null;
     this.informationToDelete = null;
   }
 
