@@ -2663,13 +2663,16 @@ export class EventSetupComponent implements OnInit {
   searchQuery: string = "";
   editMode = false;
   editModeExhibitor = false;
+  editModeSpeaker = false;
   editModeInformation = false;
   editingSchedule: any = null;
   editingExhibitor: any = null;
+  editingSpeaker: any = null;
   editingInformation: any = null;
   isDeleteModalOpen = false;
   scheduleToDelete: string | null = null;
   exhibitorToDelete: string | null = null;
+  speakerToDelete: string | null = null;
   informationToDelete: string | null = null;
   aboutTitle: string = "About ENGIMACH 2023";
   aboutDescription: string =
