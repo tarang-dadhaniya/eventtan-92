@@ -118,11 +118,11 @@ import { FormsModule } from "@angular/forms";
                 <button
                   type="button"
                   (click)="profileInput.click()"
-                  class="absolute bottom-0 right-0 w-12 h-12 rounded-full bg-[#009FD8] flex items-center justify-center shadow-md hover:bg-[#0385b5] transition-colors"
+                  class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-[#009FD8] flex items-center justify-center shadow-md hover:bg-[#0385b5] transition-colors"
                 >
                   <svg
-                    width="20"
-                    height="20"
+                    width="16"
+                    height="16"
                     viewBox="0 0 20 20"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"

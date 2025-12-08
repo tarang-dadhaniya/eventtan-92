@@ -2361,7 +2361,7 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
 
                       <!-- Table Header -->
                       <div
-                        class="px-7 py-5 border-b border-[#CED4DA] bg-white hidden md:grid grid-cols-[60px_1fr_200px_200px_120px] gap-4"
+                        class="px-7 py-5 border-b border-[#CED4DA] bg-white hidden md:grid grid-cols-[60px_1fr_200px_200px_120px] gap-4 md:gap-0"
                       >
                         <div
                           class="text-base font-semibold text-[#181C32] text-center"
@@ -2377,13 +2377,138 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
                         <div class="text-base font-semibold text-[#181C32]">
                           Position
                         </div>
-                        <div class="text-base font-semibold text-[#181C32]">
+                        <div
+                          class="text-base font-semibold text-[#181C32] text-center"
+                        >
                           Action
+                        </div>
+                      </div>
+
+                      <!-- Speaker Rows -->
+                      <div *ngIf="speakers.length > 0">
+                        <div
+                          *ngFor="let speaker of speakers; let i = index"
+                          class="px-7 py-5 border-b border-[#CED4DA] grid grid-cols-1 md:grid-cols-[60px_1fr_200px_200px_120px] gap-4 md:gap-0 items-center"
+                        >
+                          <!-- Sr. No -->
+                          <div
+                            class="text-base font-semibold text-[#181C32] text-center"
+                          >
+                            {{ i + 1 }}
+                          </div>
+
+                          <!-- Name with Avatar and Email -->
+                          <div class="flex items-center gap-3">
+                            <div
+                              *ngIf="speaker.profileImage"
+                              class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0"
+                            >
+                              <img
+                                [src]="speaker.profileImage"
+                                alt="{{ speaker.firstName }} {{
+                                  speaker.lastName
+                                }}"
+                                class="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div
+                              *ngIf="!speaker.profileImage"
+                              class="w-12 h-12 rounded-full bg-[#E8F4F8] flex items-center justify-center flex-shrink-0 font-semibold text-[#009FD8]"
+                            >
+                              {{
+                                getInitials(
+                                  speaker.firstName + " " + speaker.lastName
+                                )
+                              }}
+                            </div>
+                            <div class="flex flex-col gap-1">
+                              <p class="text-base font-semibold text-[#353846]">
+                                {{ speaker.firstName }} {{ speaker.lastName }}
+                              </p>
+                              <p class="text-sm text-[#878A99]">
+                                {{ speaker.email }}
+                              </p>
+                            </div>
+                          </div>
+
+                          <!-- Company -->
+                          <div class="text-base font-semibold text-[#353846]">
+                            {{ speaker.company }}
+                          </div>
+
+                          <!-- Position -->
+                          <div class="text-base font-semibold text-[#353846]">
+                            {{ speaker.position }}
+                          </div>
+
+                          <!-- Action Buttons -->
+                          <div class="flex items-center justify-center gap-3">
+                            <!-- Edit Button -->
+                            <button
+                              (click)="editSpeaker(speaker)"
+                              class="w-10 h-10 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+                              title="Edit speaker"
+                            >
+                              <svg
+                                width="40"
+                                height="40"
+                                viewBox="0 0 40 40"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <circle cx="20" cy="20" r="20" fill="#009FD8" />
+                                <path
+                                  d="M29.1484 11.6403L29.1255 11.6195C28.6882 11.22 28.1213 11 27.5293 11C26.8656 11 26.2283 11.281 25.7809 11.7708L17.3204 21.0332C17.2433 21.1177 17.1848 21.2173 17.1487 21.3257L16.1539 24.308C16.0388 24.6528 16.0966 25.0342 16.3082 25.328C16.5216 25.6242 16.8654 25.801 17.2279 25.801C17.3847 25.801 17.538 25.7688 17.6833 25.7052L20.5637 24.4451C20.6684 24.3993 20.7624 24.332 20.8394 24.2476L29.2999 14.9852C30.1803 14.0214 30.1124 12.521 29.1484 11.6403ZM18.0599 23.7571L18.6437 22.0071L18.6929 21.9532L19.7993 22.9637L19.7501 23.0177L18.0599 23.7571ZM28.0936 13.8833L20.9012 21.7575L19.7948 20.7469L26.9872 12.8727C27.1279 12.7187 27.3204 12.6338 27.5293 12.6338C27.7126 12.6338 27.8881 12.702 28.0239 12.826L28.0468 12.8469C28.3454 13.1197 28.3664 13.5846 28.0936 13.8833Z"
+                                  fill="white"
+                                />
+                                <path
+                                  d="M27.5065 18.5364C27.0553 18.5364 26.6896 18.9021 26.6896 19.3533V26.2886C26.6896 27.4341 25.7576 28.3661 24.6121 28.3661H14.7113C13.5657 28.3661 12.6338 27.4341 12.6338 26.2886V16.4683C12.6338 15.3227 13.5658 14.3908 14.7113 14.3908H21.8775C22.3287 14.3908 22.6944 14.025 22.6944 13.5739C22.6944 13.1227 22.3287 12.757 21.8775 12.757H14.7113C12.6648 12.757 11 14.4219 11 16.4683V26.2886C11 28.335 12.6649 29.9999 14.7113 29.9999H24.612C26.6584 29.9999 28.3233 28.335 28.3233 26.2886V19.3533C28.3234 18.9021 27.9576 18.5364 27.5065 18.5364Z"
+                                  fill="white"
+                                />
+                              </svg>
+                            </button>
+
+                            <!-- Delete Button -->
+                            <button
+                              (click)="deleteSpeaker(speaker.id)"
+                              class="w-10 h-10 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+                              title="Delete speaker"
+                            >
+                              <svg
+                                width="40"
+                                height="40"
+                                viewBox="0 0 40 40"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <circle cx="20" cy="20" r="20" fill="#BF0505" />
+                                <g transform="translate(10, 10)">
+                                  <path
+                                    d="M15.834 5.83337C15.613 5.83337 15.401 5.92117 15.2447 6.07745C15.0884 6.23373 15.0007 6.44569 15.0007 6.66671V15.9925C14.9767 16.4139 14.7873 16.8088 14.4736 17.0912C14.1598 17.3736 13.7472 17.5205 13.3257 17.5H6.67565C6.25406 17.5205 5.84147 17.3736 5.52774 17.0912C5.21401 16.8088 5.02456 16.4139 5.00065 15.9925V6.66671C5.00065 6.44569 4.91285 6.23373 4.75657 6.07745C4.60029 5.92117 4.38833 5.83337 4.16732 5.83337C3.9463 5.83337 3.73434 5.92117 3.57806 6.07745C3.42178 6.23373 3.33398 6.44569 3.33398 6.66671V15.9925C3.35777 16.8561 3.7228 17.675 4.34913 18.2699C4.97547 18.8648 5.81204 19.1873 6.67565 19.1667H13.3257C14.1893 19.1873 15.0258 18.8648 15.6522 18.2699C16.2785 17.675 16.6435 16.8561 16.6673 15.9925V6.66671C16.6673 6.44569 16.5795 6.23373 16.4232 6.07745C16.267 5.92117 16.055 5.83337 15.834 5.83337Z"
+                                    fill="white"
+                                  />
+                                  <path
+                                    d="M16.6667 3.33337H13.3333V1.66671C13.3333 1.44569 13.2455 1.23373 13.0893 1.07745C12.933 0.921171 12.721 0.833374 12.5 0.833374H7.5C7.27899 0.833374 7.06702 0.921171 6.91074 1.07745C6.75446 1.23373 6.66667 1.44569 6.66667 1.66671V3.33337H3.33333C3.11232 3.33337 2.90036 3.42117 2.74408 3.57745C2.5878 3.73373 2.5 3.94569 2.5 4.16671C2.5 4.38772 2.5878 4.59968 2.74408 4.75596C2.90036 4.91224 3.11232 5.00004 3.33333 5.00004H16.6667C16.8877 5.00004 17.0996 4.91224 17.2559 4.75596C17.4122 4.59968 17.5 4.38772 17.5 4.16671C17.5 3.94569 17.4122 3.73373 17.2559 3.57745C17.0996 3.42117 16.8877 3.33337 16.6667 3.33337ZM8.33333 3.33337V2.50004H11.6667V3.33337H8.33333Z"
+                                    fill="white"
+                                  />
+                                  <path
+                                    d="M9.16667 14.1667V8.33333C9.16667 8.11232 9.07887 7.90036 8.92259 7.74408C8.76631 7.5878 8.55435 7.5 8.33333 7.5C8.11232 7.5 7.90036 7.5878 7.74408 7.74408C7.5878 7.90036 7.5 8.11232 7.5 8.33333V14.1667C7.5 14.3877 7.5878 14.5996 7.74408 14.7559C7.90036 14.9122 8.11232 15 8.33333 15C8.55435 15 8.76631 14.9122 8.92259 14.7559C9.07887 14.5996 9.16667 14.3877 9.16667 14.1667Z"
+                                    fill="white"
+                                  />
+                                  <path
+                                    d="M12.5007 14.1667V8.33333C12.5007 8.11232 12.4129 7.90036 12.2566 7.74408C12.1003 7.5878 11.8883 7.5 11.6673 7.5C11.4463 7.5 11.2343 7.5878 11.0781 7.74408C10.9218 7.90036 10.834 8.11232 10.834 8.33333V14.1667C10.834 14.3877 10.9218 14.5996 11.0781 14.7559C11.2343 14.9122 11.4463 15 11.6673 15C11.8883 15 12.1003 14.9122 12.2566 14.7559C12.4129 14.5996 12.5007 14.3877 12.5007 14.1667Z"
+                                    fill="white"
+                                  />
+                                </g>
+                              </svg>
+                            </button>
+                          </div>
                         </div>
                       </div>
 
                       <!-- Empty State -->
                       <div
+                        *ngIf="speakers.length === 0"
                         class="py-20 flex flex-col items-center justify-center"
                       >
                         <svg
