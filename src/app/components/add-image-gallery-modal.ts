@@ -43,7 +43,7 @@ import { GalleryImage } from "../services/image-gallery.service";
                 fill="#3F4254"
               />
               <path
-                d="M17.0781 18C16.841 18 16.6042 17.9099 16.4238 17.7284L0.275141 1.58107C-0.0865054 1.2192 -0.0865054 0.632881 0.275141 0.271235C0.636787 -0.0904116 1.22311 -0.0904116 1.58498 0.271235L17.7323 16.4187C18.0939 16.7804 18.0939 17.3667 17.7323 17.7284C17.5508 17.9087 17.3139 18 17.0781 18Z"
+                d="M17.0781 18C16.841 18 16.6042 17.9099 16.4238 17.7284L0.275141 1.58107C-0.0563682 0.8128 -0.0563682 0.421921 0.184729 0.180823C0.425827 -0.0602744 0.816707 -0.0602744 1.05795 0.180823L17.7323 16.4187C18.0939 16.7804 18.0939 17.3667 17.7323 17.7284C17.5508 17.9087 17.3139 18 17.0781 18Z"
                 fill="#3F4254"
               />
             </svg>
@@ -145,12 +145,68 @@ import { GalleryImage } from "../services/image-gallery.service";
 
             <!-- Product Image -->
             <div>
-              <label class="block text-base font-medium text-[#212529] mb-2">
+              <label class="block text-base font-medium text-[#212529] mb-3">
                 Product Image
               </label>
+              
+              <!-- Uploaded Images Gallery -->
+              <div
+                *ngIf="productImagePreviews.length > 0"
+                class="mb-4 p-4 border-2 border-dashed border-[#B9BBBC] rounded-[4px] bg-white"
+              >
+                <div class="flex flex-wrap gap-4">
+                  <div
+                    *ngFor="let image of productImagePreviews; let i = index"
+                    class="relative group"
+                  >
+                    <img
+                      [src]="image"
+                      alt="Product image preview"
+                      class="w-20 h-20 object-cover rounded-[4px]"
+                    />
+                    <!-- Delete Button -->
+                    <button
+                      type="button"
+                      (click)="removeProductImage(i)"
+                      class="absolute -top-2 -right-2 w-5 h-5 bg-white border border-[#878A99] rounded-full flex items-center justify-center hover:bg-red-50 transition-colors shadow-sm"
+                      aria-label="Remove image"
+                    >
+                      <svg
+                        width="6"
+                        height="6"
+                        viewBox="0 0 6 6"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <g clip-path="url(#clip0_remove)">
+                          <path
+                            d="M0.30853 6.00002C0.229495 6.00002 0.15046 5.96995 0.0904116 5.90945C-0.0301372 5.7889 -0.0301372 5.59346 0.0904116 5.47292L5.47292 0.0904116C5.59346 -0.0301372 5.7889 -0.0301372 5.90945 0.0904116C6.03 0.21096 6.03 0.4064 5.90945 0.527024L0.527024 5.90945C0.466524 5.96958 0.387489 6.00002 0.30853 6.00002Z"
+                            fill="#686868"
+                          />
+                          <path
+                            d="M5.69141 6.00002C5.61238 6.00002 5.53342 5.96995 5.47329 5.90945L0.0904116 0.527024C-0.0301372 0.4064 -0.0301372 0.21096 0.0904116 0.0904116C0.21096 -0.0301372 0.4064 -0.0301372 0.527024 0.0904116L5.90945 5.47292C6.03 5.59346 6.03 5.7889 5.90945 5.90945C5.84895 5.96958 5.76999 6.00002 5.69141 6.00002Z"
+                            fill="#686868"
+                          />
+                        </g>
+                        <defs>
+                          <clipPath id="clip0_remove">
+                            <rect width="6" height="6" fill="white" />
+                          </clipPath>
+                        </defs>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Drag and Drop Upload Area -->
               <div
                 class="w-full border-2 border-dashed border-[#B9BBBC] rounded-[4px] p-8 text-center cursor-pointer hover:border-[#009FD8] transition-colors flex flex-col items-center justify-center min-h-[120px]"
                 (click)="productImageInput.click()"
+                (dragover)="onDragOver($event)"
+                (dragleave)="onDragLeave($event)"
+                (drop)="onDrop($event)"
+                [class.border-[#009FD8] bg-blue-50]="isDragging"
               >
                 <svg
                   class="w-8 h-8 text-[#878A99] mb-3"
@@ -174,15 +230,9 @@ import { GalleryImage } from "../services/image-gallery.service";
                 type="file"
                 class="hidden"
                 accept="image/*"
+                multiple
                 (change)="onProductImageSelected($event)"
               />
-              <div *ngIf="productImagePreview" class="mt-4">
-                <img
-                  [src]="productImagePreview"
-                  alt="Product preview"
-                  class="max-h-40 max-w-full rounded-[4px] border border-[#E9EBEC]"
-                />
-              </div>
             </div>
           </div>
         </div>
@@ -256,7 +306,8 @@ export class AddImageGalleryModalComponent {
   @Output() close = new EventEmitter<void>();
 
   editMode = false;
-  productImagePreview: string | null = null;
+  productImagePreviews: string[] = [];
+  isDragging = false;
 
   formData = {
     title: "",
@@ -265,7 +316,7 @@ export class AddImageGalleryModalComponent {
     thumbnailImageUrl: "",
     imageGalleryFor: "",
     viewMoreUrl: "",
-    productImageUrl: "",
+    productImageUrls: [] as string[],
   };
 
   ngOnChanges() {
@@ -278,9 +329,9 @@ export class AddImageGalleryModalComponent {
         thumbnailImageUrl: this.editingImage.thumbnailImageUrl || "",
         imageGalleryFor: this.editingImage.imageGalleryFor || "",
         viewMoreUrl: this.editingImage.viewMoreUrl || "",
-        productImageUrl: this.editingImage.productImageUrl || "",
+        productImageUrls: this.editingImage.productImageUrls || [],
       };
-      this.productImagePreview = this.editingImage.productImageUrl || null;
+      this.productImagePreviews = this.editingImage.productImageUrls || [];
     } else if (this.isOpen && !this.editingImage) {
       this.editMode = false;
       this.resetForm();
@@ -305,15 +356,52 @@ export class AddImageGalleryModalComponent {
 
   onProductImageSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.productImagePreview = e.target.result;
-        this.formData.productImageUrl = e.target.result;
-      };
-      reader.readAsDataURL(file);
+    if (input.files) {
+      this.processImageFiles(input.files);
     }
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+
+    if (event.dataTransfer?.files) {
+      this.processImageFiles(event.dataTransfer.files);
+    }
+  }
+
+  private processImageFiles(files: FileList): void {
+    Array.from(files).forEach((file) => {
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          const imageUrl = e.target.result;
+          if (!this.productImagePreviews.includes(imageUrl)) {
+            this.productImagePreviews.push(imageUrl);
+            this.formData.productImageUrls.push(imageUrl);
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  removeProductImage(index: number): void {
+    this.productImagePreviews.splice(index, 1);
+    this.formData.productImageUrls.splice(index, 1);
   }
 
   onSave(): void {
@@ -321,13 +409,18 @@ export class AddImageGalleryModalComponent {
       this.save.emit({
         title: this.formData.title,
         imageUrl:
-          this.formData.productImageUrl || this.formData.thumbnailImageUrl,
+          this.formData.productImageUrls[0] ||
+          this.formData.thumbnailImageUrl ||
+          "",
         caption: this.formData.caption || undefined,
         thumbnailImageUrl:
           this.formData.thumbnailImageUrl || undefined,
         imageGalleryFor: this.formData.imageGalleryFor || undefined,
         viewMoreUrl: this.formData.viewMoreUrl || undefined,
-        productImageUrl: this.formData.productImageUrl || undefined,
+        productImageUrls:
+          this.formData.productImageUrls.length > 0
+            ? this.formData.productImageUrls
+            : undefined,
       });
       this.resetForm();
     }
@@ -352,9 +445,10 @@ export class AddImageGalleryModalComponent {
       thumbnailImageUrl: "",
       imageGalleryFor: "",
       viewMoreUrl: "",
-      productImageUrl: "",
+      productImageUrls: [],
     };
-    this.productImagePreview = null;
+    this.productImagePreviews = [];
     this.editMode = false;
+    this.isDragging = false;
   }
 }
