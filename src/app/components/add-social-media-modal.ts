@@ -20,7 +20,7 @@ import { FormsModule } from "@angular/forms";
         <div class="flex-shrink-0 px-[30px] py-[30px]">
           <div class="flex items-center justify-between">
             <h2 class="text-[22px] font-medium text-[#3F4254]">
-              Add Social Media
+              {{ editMode ? "Edit Social Media" : "Add Social Media" }}
             </h2>
             <button
               type="button"
@@ -190,7 +190,9 @@ import { FormsModule } from "@angular/forms";
                 formData.socialMedia.blogRss || formData.socialMedia.facebook
               "
             >
-              <label class="block text-base font-medium text-[#212529] mb-[31px]">
+              <label
+                class="block text-base font-medium text-[#212529] mb-[31px]"
+              >
                 URL
               </label>
 
@@ -346,18 +348,39 @@ export class AddSocialMediaModalComponent {
   @Input() editMode = false;
   @Input() set socialMediaData(data: any) {
     if (data) {
-      this.formData = {
-        socialMedia: {
-          blogRss: data.socialMedia?.blogRss || false,
-          facebook: data.socialMedia?.facebook || false,
-          twitter: data.socialMedia?.twitter || false,
-        },
-        urls: {
-          blogRss: data.urls?.blogRss || "",
-          facebook: data.urls?.facebook || "",
-          twitter: data.urls?.twitter || "",
-        },
-      };
+      if (data.type) {
+        const typeMap: { [key: string]: "blogRss" | "facebook" | "twitter" } = {
+          "Blog/Rss": "blogRss",
+          Facebook: "facebook",
+          Twitter: "twitter",
+        };
+        const socialMediaType = typeMap[data.type] || "facebook";
+        this.formData = {
+          socialMedia: {
+            blogRss: socialMediaType === "blogRss",
+            facebook: socialMediaType === "facebook",
+            twitter: socialMediaType === "twitter",
+          },
+          urls: {
+            blogRss: socialMediaType === "blogRss" ? data.url : "",
+            facebook: socialMediaType === "facebook" ? data.url : "",
+            twitter: socialMediaType === "twitter" ? data.url : "",
+          },
+        };
+      } else {
+        this.formData = {
+          socialMedia: {
+            blogRss: data.socialMedia?.blogRss || false,
+            facebook: data.socialMedia?.facebook || false,
+            twitter: data.socialMedia?.twitter || false,
+          },
+          urls: {
+            blogRss: data.urls?.blogRss || "",
+            facebook: data.urls?.facebook || "",
+            twitter: data.urls?.twitter || "",
+          },
+        };
+      }
     }
   }
 

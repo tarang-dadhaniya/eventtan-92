@@ -24,6 +24,10 @@ import {
   Information,
 } from "../services/information.service";
 import { SponsorService, Sponsor } from "../services/sponsor.service";
+import {
+  SocialMediaService,
+  SocialMediaEntry,
+} from "../services/social-media.service";
 
 const DASHBOARD_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.4" fill-rule="evenodd" clip-rule="evenodd" d="M9.11972 1.77151C8.15614 1.4095 7.09392 1.4095 6.13033 1.77151C5.5251 1.99889 4.94006 2.45532 3.51022 3.59919L1.21855 5.43253C0.895102 5.69128 0.423133 5.63884 0.164376 5.3154C-0.0943811 4.99195 -0.0419401 4.51998 0.281506 4.26122L2.57317 2.42789C2.61283 2.39616 2.65202 2.36481 2.69075 2.33381C3.96492 1.31414 4.74565 0.689359 5.6028 0.367335C6.90647 -0.122445 8.34359 -0.122445 9.64726 0.367335C10.5044 0.689359 11.2851 1.31414 12.5593 2.33381C12.598 2.3648 12.6372 2.39616 12.6769 2.42789L14.9685 4.26122C15.292 4.51998 15.3444 4.99195 15.0857 5.3154C14.8269 5.63884 14.355 5.69128 14.0315 5.43253L11.7398 3.59919C10.31 2.45532 9.72496 1.99889 9.11972 1.77151Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M4.08565 0.281506C4.34441 0.604953 4.29197 1.07692 3.96852 1.33568L3.51019 1.70235C3.09253 2.03647 2.92421 2.17224 2.77968 2.31347C2.06537 3.01148 1.61969 3.93876 1.52086 4.93259C1.50087 5.13368 1.5 5.34993 1.5 5.88479V11.2C1.5 13.3171 3.21624 15.0334 5.33334 15.0334C5.93164 15.0334 6.41667 14.5483 6.41667 13.95V10.2833C6.41667 8.35031 7.98367 6.78331 9.91667 6.78331C11.8497 6.78331 13.4167 8.35031 13.4167 10.2833V13.95C13.4167 14.5483 13.9017 15.0334 14.5 15.0334C16.6171 15.0334 18.3333 13.3171 18.3333 11.2V5.88479C18.3333 5.34993 18.3325 5.13368 18.3125 4.93259C18.2136 3.93876 17.7679 3.01148 17.0536 2.31347C16.9091 2.17224 16.7408 2.03647 16.3231 1.70235L15.8648 1.33568C15.5413 1.07692 15.4889 0.604953 15.7477 0.281506C16.0064 -0.0419405 16.4784 -0.0943815 16.8018 0.164376L17.2748 0.541868C17.6571 0.856916 17.886 1.04452 18.0782 1.23375C19.0199 2.16224 19.5996 3.40171 19.7171 4.72041C19.7394 4.94668 19.7496 5.18893 19.7543 5.59686L19.75 5.88479V11.2C19.75 14.0997 17.3997 16.45 14.5 16.45C13.1193 16.45 11.9167 15.2473 11.9167 13.8667V10.2C11.9167 9.19579 11.087 8.38331 10.0667 8.38331C9.04634 8.38331 8.21667 9.19579 8.21667 10.2V13.8667C8.21667 15.2473 7.01401 16.45 5.63334 16.45C2.73357 16.45 0.383333 14.0997 0.383333 11.2V5.88479L0.379004 5.59686C0.383737 5.18893 0.393911 4.94668 0.416226 4.72041C0.533719 3.40171 1.11338 2.16224 2.05508 1.23375C2.24733 1.04452 2.47622 0.856916 2.85854 0.541868L3.33152 0.164376C3.65497 -0.0943815 4.12694 -0.0419405 4.38565 0.281506Z" fill="white"/></svg>`;
 
@@ -2888,17 +2892,105 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
                           </div>
                         </div>
 
-                        <!-- Empty State -->
+                        <!-- Table Rows -->
                         <div
-                          class="bg-white min-h-80 flex items-center justify-center"
+                          *ngIf="socialMediaList.length > 0; else emptyState"
                         >
-                          <div class="text-center py-12">
-                            <p class="text-[#878A99] text-lg">
-                              No social media links added. Click "Add Social
-                              Media" to get started.
-                            </p>
+                          <div
+                            *ngFor="let item of socialMediaList; let i = index"
+                            class="bg-white border-b border-[#E9E9E9] grid grid-cols-[70px_1fr_200px_120px] px-6 py-4 gap-4 items-center"
+                          >
+                            <div
+                              class="text-[#353846] font-semibold text-base text-center"
+                            >
+                              {{ i + 1 }}
+                            </div>
+                            <div
+                              class="text-[#353846] font-semibold text-base truncate"
+                            >
+                              {{ item.type }}
+                            </div>
+                            <div
+                              class="text-[#353846] font-semibold text-base truncate"
+                            >
+                              {{ item.url }}
+                            </div>
+                            <div class="flex items-center justify-center gap-2">
+                              <button
+                                (click)="editSocialMedia(item)"
+                                class="w-10 h-10 flex items-center justify-center hover:opacity-80 transition-opacity"
+                                aria-label="Edit"
+                              >
+                                <svg
+                                  width="40"
+                                  height="40"
+                                  viewBox="0 0 40 40"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <circle
+                                    cx="20"
+                                    cy="20"
+                                    r="20"
+                                    fill="#009FD8"
+                                  />
+                                  <path
+                                    d="M29.1464 11.6403L29.1235 11.6195C28.6862 11.22 28.1194 11 27.5273 11C26.8636 11 26.2264 11.281 25.7789 11.7708L17.3185 21.0332C17.2414 21.1177 17.1829 21.2173 17.1467 21.3257L16.1519 24.308C16.0369 24.6528 16.0946 25.0342 16.3063 25.328C16.5197 25.6242 16.8634 25.801 17.2259 25.801C17.3827 25.801 17.536 25.7688 17.6814 25.7052L20.5618 24.4451C20.6665 24.3993 20.7604 24.332 20.8375 24.2476L29.298 14.9852C30.1784 14.0214 30.1105 12.521 29.1464 11.6403ZM18.058 23.7571L18.6417 22.0071L18.6909 21.9532L19.7974 22.9637L19.7481 23.0177L18.058 23.7571ZM28.0917 13.8833L20.8992 21.7575L19.7928 20.7469L26.9853 12.8727C27.1259 12.7187 27.3185 12.6338 27.5274 12.6338C27.7106 12.6338 27.8862 12.702 28.022 12.826L28.0448 12.8469C28.3435 13.1197 28.3645 13.5846 28.0917 13.8833Z"
+                                    fill="white"
+                                  />
+                                  <path
+                                    d="M27.5065 18.5364C27.0553 18.5364 26.6896 18.9021 26.6896 19.3533V26.2886C26.6896 27.4341 25.7576 28.3661 24.6121 28.3661H14.7113C13.5657 28.3661 12.6338 27.4341 12.6338 26.2886V16.4683C12.6338 15.3227 13.5658 14.3908 14.7113 14.3908H21.8775C22.3287 14.3908 22.6944 14.025 22.6944 13.5739C22.6944 13.1227 22.3287 12.757 21.8775 12.757H14.7113C12.6648 12.757 11 14.4219 11 16.4683V26.2886C11 28.335 12.6649 29.9999 14.7113 29.9999H24.612C26.6584 29.9999 28.3233 28.335 28.3233 26.2886V19.3533C28.3234 18.9021 27.9576 18.5364 27.5065 18.5364Z"
+                                    fill="white"
+                                  />
+                                </svg>
+                              </button>
+                              <button
+                                (click)="deleteSocialMedia(item.id)"
+                                class="w-10 h-10 rounded-full bg-[#BF0505] hover:bg-[#a00404] flex items-center justify-center transition-colors"
+                                aria-label="Delete"
+                              >
+                                <svg
+                                  width="20"
+                                  height="20"
+                                  viewBox="0 0 20 20"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M15.832 5.83325C15.611 5.83325 15.3991 5.92105 15.2428 6.07733C15.0865 6.23361 14.9987 6.44557 14.9987 6.66659V15.9924C14.9748 16.4138 14.7853 16.8087 14.4716 17.0911C14.1579 17.3734 13.7453 17.5204 13.3237 17.4999H6.6737C6.25211 17.5204 5.83952 17.3734 5.52579 17.0911C5.21205 16.8087 5.0226 16.4138 4.9987 15.9924V6.66659C4.9987 6.44557 4.9109 6.23361 4.75462 6.07733C4.59834 5.92105 4.38638 5.83325 4.16536 5.83325C3.94435 5.83325 3.73239 5.92105 3.57611 6.07733C3.41983 6.23361 3.33203 6.44557 3.33203 6.66659V15.9924C3.35582 16.8559 3.72085 17.6748 4.34718 18.2698C4.97351 18.8647 5.81009 19.1872 6.6737 19.1666H13.3237C14.1873 19.1872 15.0239 18.8647 15.6502 18.2698C16.2765 17.6748 16.6416 16.8559 16.6654 15.9924V6.66659C16.6654 6.44557 16.5776 6.23361 16.4213 6.07733C16.265 5.92105 16.053 5.83325 15.832 5.83325Z"
+                                    fill="white"
+                                  />
+                                  <path
+                                    d="M16.6667 3.33325H13.3333V1.66659C13.3333 1.44557 13.2455 1.23361 13.0893 1.07733C12.933 0.921049 12.721 0.833252 12.5 0.833252H7.5C7.27899 0.833252 7.06702 0.921049 6.91074 1.07733C6.75446 1.23361 6.66667 1.44557 6.66667 1.66659V3.33325H3.33333C3.11232 3.33325 2.90036 3.42105 2.74408 3.57733C2.5878 3.73361 2.5 3.94557 2.5 4.16659C2.5 4.3876 2.5878 4.59956 2.74408 4.75584C2.90036 4.91212 3.11232 4.99992 3.33333 4.99992H16.6667C16.8877 4.99992 17.0996 4.91212 17.2559 4.75584C17.4122 4.59956 17.5 4.3876 17.5 4.16659C17.5 3.94557 17.4122 3.73361 17.2559 3.57733C17.0996 3.42105 16.8877 3.33325 16.6667 3.33325ZM8.33333 3.33325V2.49992H11.6667V3.33325H8.33333Z"
+                                    fill="white"
+                                  />
+                                  <path
+                                    d="M9.16667 14.1667V8.33333C9.16667 8.11232 9.07887 7.90036 8.92259 7.74408C8.76631 7.5878 8.55435 7.5 8.33333 7.5C8.11232 7.5 7.90036 7.5878 7.74408 7.74408C7.5878 7.90036 7.5 8.11232 7.5 8.33333V14.1667C7.5 14.3877 7.5878 14.5996 7.74408 14.7559C7.90036 14.9122 8.11232 15 8.33333 15C8.55435 15 8.76631 14.9122 8.92259 14.7559C9.07887 14.5996 9.16667 14.3877 9.16667 14.1667Z"
+                                    fill="white"
+                                  />
+                                  <path
+                                    d="M12.4987 14.1667V8.33333C12.4987 8.11232 12.4109 7.90036 12.2546 7.74408C12.0983 7.5878 11.8864 7.5 11.6654 7.5C11.4444 7.5 11.2324 7.5878 11.0761 7.74408C10.9198 7.90036 10.832 8.11232 10.832 8.33333V14.1667C10.832 14.3877 10.9198 14.5996 11.0761 14.7559C11.2324 14.9122 11.4444 15 11.6654 15C11.8864 15 12.0983 14.9122 12.2546 14.7559C12.4109 14.5996 12.4987 14.3877 12.4987 14.1667Z"
+                                    fill="white"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
                           </div>
                         </div>
+
+                        <!-- Empty State -->
+                        <ng-template #emptyState>
+                          <div
+                            class="bg-white min-h-80 flex items-center justify-center"
+                          >
+                            <div class="text-center py-12">
+                              <p class="text-[#878A99] text-lg">
+                                No social media links added. Click "Add Social
+                                Media" to get started.
+                              </p>
+                            </div>
+                          </div>
+                        </ng-template>
                       </div>
                     </div>
                   </div>
@@ -3119,6 +3211,8 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
     <!-- Add Social Media Modal -->
     <app-add-social-media-modal
       [isOpen]="isSocialMediaModalOpen"
+      [editMode]="editModeSocialMedia"
+      [socialMediaData]="editingSocialMedia"
       (close)="closeSocialMediaModal()"
       (submit)="onSocialMediaSave($event)"
     ></app-add-social-media-modal>
@@ -3180,12 +3274,14 @@ export class EventSetupComponent implements OnInit {
   speakers: Speaker[] = [];
   information: Information[] = [];
   sponsors: Sponsor[] = [];
+  socialMediaList: SocialMediaEntry[] = [];
   searchQuery: string = "";
   editMode = false;
   editModeExhibitor = false;
   editModeSpeaker = false;
   editModeInformation = false;
   editModeSponsor = false;
+  editModeSocialMedia = false;
   editingSchedule: any = null;
   editingExhibitor: any = null;
   editingSpeaker: any = null;
@@ -3197,6 +3293,8 @@ export class EventSetupComponent implements OnInit {
   speakerToDelete: string | null = null;
   informationToDelete: string | null = null;
   sponsorToDelete: string | null = null;
+  socialMediaToDelete: string | null = null;
+  editingSocialMedia: SocialMediaEntry | null = null;
   aboutTitle: string = "About ENGIMACH 2023";
   aboutDescription: string =
     "After the rousing success of the 2021 edition, the expectations from ENGIMACH 2023 have also risen. India is the only large economy expected to grow significantly in the coming years. India is also fast emerging as a preferred manufacturing base in a world seeking reliable supply chains. On the other hand, Indian industry seeks more foreign investments, technology, exports and domestic demand. In this context, ENGIMACH 2023 is expected to be a major catalyst of economic growth and generate significant and lasting business outcomes.";
@@ -3361,6 +3459,7 @@ export class EventSetupComponent implements OnInit {
     private speakerService: SpeakerService,
     private informationService: InformationService,
     private sponsorService: SponsorService,
+    private socialMediaService: SocialMediaService,
   ) {}
 
   getSafeHtml(html: string): SafeHtml {
@@ -3381,6 +3480,7 @@ export class EventSetupComponent implements OnInit {
     this.loadSpeakers();
     this.loadInformation();
     this.loadSponsors();
+    this.loadSocialMedia();
 
     this.updateActiveRoute();
 
@@ -3720,6 +3820,9 @@ export class EventSetupComponent implements OnInit {
     } else if (this.sponsorToDelete) {
       this.sponsorService.deleteSponsor(this.sponsorToDelete);
       this.loadSponsors();
+    } else if (this.socialMediaToDelete) {
+      this.socialMediaService.deleteSocialMedia(this.socialMediaToDelete);
+      this.loadSocialMedia();
     }
     this.closeDeleteModal();
   }
@@ -3731,6 +3834,7 @@ export class EventSetupComponent implements OnInit {
     this.speakerToDelete = null;
     this.informationToDelete = null;
     this.sponsorToDelete = null;
+    this.socialMediaToDelete = null;
   }
 
   openExhibitorModal() {
@@ -3879,15 +3983,53 @@ export class EventSetupComponent implements OnInit {
   }
 
   openAddSocialMediaModal() {
+    this.editModeSocialMedia = false;
+    this.editingSocialMedia = null;
+    this.isSocialMediaModalOpen = true;
+  }
+
+  editSocialMedia(socialMedia: SocialMediaEntry) {
+    this.editModeSocialMedia = true;
+    this.editingSocialMedia = socialMedia;
     this.isSocialMediaModalOpen = true;
   }
 
   closeSocialMediaModal() {
     this.isSocialMediaModalOpen = false;
+    this.editModeSocialMedia = false;
+    this.editingSocialMedia = null;
   }
 
   onSocialMediaSave(socialMediaData: any) {
-    console.log("Social media saved:", socialMediaData);
+    if (this.editModeSocialMedia && this.editingSocialMedia) {
+      this.socialMediaService.updateSocialMedia(this.editingSocialMedia.id, {
+        type: socialMediaData.socialMedia.facebook
+          ? "Facebook"
+          : socialMediaData.socialMedia.blogRss
+            ? "Blog/Rss"
+            : "Twitter",
+        url:
+          socialMediaData.urls.facebook ||
+          socialMediaData.urls.blogRss ||
+          socialMediaData.urls.twitter ||
+          "",
+      });
+    } else {
+      this.socialMediaService.addSocialMedia(this.eventId, socialMediaData);
+    }
+    this.loadSocialMedia();
+    this.closeSocialMediaModal();
+  }
+
+  loadSocialMedia() {
+    this.socialMediaList = this.socialMediaService.getSocialMediaByEvent(
+      this.eventId,
+    );
+  }
+
+  deleteSocialMedia(id: string) {
+    this.socialMediaToDelete = id;
+    this.isDeleteModalOpen = true;
   }
 
   formatTime(timeString: string): string {
