@@ -271,7 +271,7 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
               >
                 <!-- Logo and Banner Section -->
                 <div
-                  class="grid grid-cols-1 lg:grid-cols-[1fr_2.5fr] gap-4 lg:gap-6 mb-6"
+                  class="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] lg:grid-cols-[1fr_2.5fr] gap-3 sm:gap-4 lg:gap-6 mb-6"
                 >
                   <!-- Logo Upload -->
                   <div class="flex flex-col">
