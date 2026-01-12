@@ -1213,7 +1213,7 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
                           </button>
                         </div>
                         <span
-                          class="text-base font-medium text-[#049AD0] text-center leading-tight"
+                          class="text-xs sm:text-sm md:text-base font-medium text-[#049AD0] text-center leading-tight"
                         >
                           {{ getFeatureLabel(featureId) }}
                         </span>
