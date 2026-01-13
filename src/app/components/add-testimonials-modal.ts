@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 
@@ -531,7 +531,7 @@ import { FormsModule } from "@angular/forms";
     `,
   ],
 })
-export class AddTestimonialsModalComponent {
+export class AddTestimonialsModalComponent implements OnChanges {
   @Input() isOpen = false;
   @Input() editMode = false;
   @Input() set testimonialData(data: any) {
@@ -583,14 +583,41 @@ export class AddTestimonialsModalComponent {
   }
 
   onSubmit(): void {
+    // Validate that at least required fields are filled
+    if (!this.formData.firstName?.trim() || !this.formData.company?.trim() || !this.formData.designation?.trim()) {
+      alert('Please fill in First Name, Company, and Designation fields.');
+      return;
+    }
+
     this.submit.emit({ ...this.formData, profilePreview: this.profilePreview });
     this.resetForm();
     this.close.emit();
   }
 
+  onKeyDownEnter(event: KeyboardEvent): void {
+    // Prevent form submission on Enter key in input fields
+    if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+      if (event.target.tagName === 'INPUT' && (event.target as HTMLInputElement).type !== 'submit') {
+        event.preventDefault();
+      }
+    }
+  }
+
   onCancel(): void {
     this.resetForm();
     this.close.emit();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Reset form when modal closes
+    if (changes['isOpen'] && !changes['isOpen'].currentValue && changes['isOpen'].previousValue) {
+      this.resetForm();
+    }
+
+    // Reset form when opening for new testimonial (not edit mode)
+    if (changes['editMode'] && !changes['editMode'].currentValue) {
+      this.resetForm();
+    }
   }
 
   private resetForm(): void {

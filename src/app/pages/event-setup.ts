@@ -33,6 +33,10 @@ import {
   ImageGalleryService,
   GalleryImage,
 } from "../services/image-gallery.service";
+import {
+  TestimonialService,
+} from "../services/testimonial.service";
+import { Testimonial, TestimonialFormData } from "../models/testimonial";
 import { AddImageGalleryModalComponent } from "../components/add-image-gallery-modal";
 
 const DASHBOARD_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.4" fill-rule="evenodd" clip-rule="evenodd" d="M9.11972 1.77151C8.15614 1.4095 7.09392 1.4095 6.13033 1.77151C5.5251 1.99889 4.94006 2.45532 3.51022 3.59919L1.21855 5.43253C0.895102 5.69128 0.423133 5.63884 0.164376 5.3154C-0.0943811 4.99195 -0.0419401 4.51998 0.281506 4.26122L2.57317 2.42789C2.61283 2.39616 2.65202 2.36481 2.69075 2.33381C3.96492 1.31414 4.74565 0.689359 5.6028 0.367335C6.90647 -0.122445 8.34359 -0.122445 9.64726 0.367335C10.5044 0.689359 11.2851 1.31414 12.5593 2.33381C12.598 2.3648 12.6372 2.39616 12.6769 2.42789L14.9685 4.26122C15.292 4.51998 15.3444 4.99195 15.0857 5.3154C14.8269 5.63884 14.355 5.69128 14.0315 5.43253L11.7398 3.59919C10.31 2.45532 9.72496 1.99889 9.11972 1.77151Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M4.08565 0.281506C4.34441 0.604953 4.29197 1.07692 3.96852 1.33568L3.51019 1.70235C3.09253 2.03647 2.92421 2.17224 2.77968 2.31347C2.06537 3.01148 1.61969 3.93876 1.52086 4.93259C1.50087 5.13368 1.5 5.34993 1.5 5.88479V11.2C1.5 13.3171 3.21624 15.0334 5.33334 15.0334C5.93164 15.0334 6.41667 14.5483 6.41667 13.95V10.2833C6.41667 8.35031 7.98367 6.78331 9.91667 6.78331C11.8497 6.78331 13.4167 8.35031 13.4167 10.2833V13.95C13.4167 14.5483 13.9017 15.0334 14.5 15.0334C16.6171 15.0334 18.3333 13.3171 18.3333 11.2V5.88479C18.3333 5.34993 18.3325 5.13368 18.3125 4.93259C18.2136 3.93876 17.7679 3.01148 17.0536 2.31347C16.9091 2.17224 16.7408 2.03647 16.3231 1.70235L15.8648 1.33568C15.5413 1.07692 15.4889 0.604953 15.7477 0.281506C16.0064 -0.0419405 16.4784 -0.0943815 16.8018 0.164376L17.2748 0.541868C17.6571 0.856916 17.886 1.04452 18.0782 1.23375C19.0199 2.16224 19.5996 3.40171 19.7171 4.72041C19.7394 4.94668 19.7496 5.18893 19.7543 5.59686L19.75 5.88479V11.2C19.75 14.0997 17.3997 16.45 14.5 16.45C13.1193 16.45 11.9167 15.2473 11.9167 13.8667V10.2C11.9167 9.19579 11.087 8.38331 10.0667 8.38331C9.04634 8.38331 8.21667 9.19579 8.21667 10.2V13.8667C8.21667 15.2473 7.01401 16.45 5.63334 16.45C2.73357 16.45 0.383333 14.0997 0.383333 11.2V5.88479L0.379004 5.59686C0.383737 5.18893 0.393911 4.94668 0.416226 4.72041C0.533719 3.40171 1.11338 2.16224 2.05508 1.23375C2.24733 1.04452 2.47622 0.856916 2.85854 0.541868L3.33152 0.164376C3.65497 -0.0943815 4.12694 -0.0419405 4.38565 0.281506Z" fill="white"/></svg>`;
@@ -3311,31 +3315,103 @@ const EVENT_OVERVIEW_ICON = `<svg width="22" height="22" viewBox="0 0 22 22" fil
                           </div>
                         </div>
 
-                        <!-- Table Body - Empty State -->
-                        <div
-                          class="bg-white min-h-80 flex items-center justify-center"
-                        >
-                          <div class="text-center py-16">
-                            <svg
-                              width="64"
-                              height="64"
-                              viewBox="0 0 32 32"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              class="mx-auto mb-4 opacity-20"
-                            >
-                              <path
-                                d="M16 2C8.26801 2 2 8.26801 2 16C2 23.732 8.26801 30 16 30C23.732 30 30 23.732 30 16C30 8.26801 23.732 2 16 2ZM16 4C22.6514 4 28 9.34864 28 16C28 22.6514 22.6514 28 16 28C9.34864 28 4 22.6514 4 16C4 9.34864 9.34864 4 16 4ZM15 8V10H17V8H15ZM15 12V22H17V12H15Z"
-                                fill="#CED4DA"
-                              />
-                            </svg>
-                            <p class="text-lg font-medium text-[#686868] mb-2">
-                              No Testimonials Added
-                            </p>
-                            <p class="text-sm text-[#878A99]">
-                              Click "Add Testimonials" to create your first
-                              testimonial
-                            </p>
+                        <!-- Table Body -->
+                        <div class="bg-white">
+                          <!-- Empty State -->
+                          <div
+                            *ngIf="testimonialsList.length === 0"
+                            class="min-h-80 flex items-center justify-center"
+                          >
+                            <div class="text-center py-16">
+                              <svg
+                                width="64"
+                                height="64"
+                                viewBox="0 0 32 32"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="mx-auto mb-4 opacity-20"
+                              >
+                                <path
+                                  d="M16 2C8.26801 2 2 8.26801 2 16C2 23.732 8.26801 30 16 30C23.732 30 30 23.732 30 16C30 8.26801 23.732 2 16 2ZM16 4C22.6514 4 28 9.34864 28 16C28 22.6514 22.6514 28 16 28C9.34864 28 4 22.6514 4 16C4 9.34864 9.34864 4 16 4ZM15 8V10H17V8H15ZM15 12V22H17V12H15Z"
+                                  fill="#CED4DA"
+                                />
+                              </svg>
+                              <p class="text-lg font-medium text-[#686868] mb-2">
+                                No Testimonials Added
+                              </p>
+                              <p class="text-sm text-[#878A99]">
+                                Click "Add Testimonials" to create your first
+                                testimonial
+                              </p>
+                            </div>
+                          </div>
+
+                          <!-- Table Rows -->
+                          <div
+                            *ngFor="let testimonial of testimonialsList; let i = index"
+                            class="border-b border-[#E9EBEC] grid grid-cols-[70px_1fr_200px_180px_180px_100px] px-6 py-4 gap-4 items-center hover:bg-[#FCFCFE] transition-colors"
+                          >
+                            <div class="text-[#686868] font-semibold text-base text-center">
+                              {{ i + 1 }}
+                            </div>
+                            <div class="text-[#686868] font-semibold text-base">
+                              {{ testimonial.name }}
+                            </div>
+                            <div class="text-[#686868] font-semibold text-base">
+                              {{ testimonial.company }}
+                            </div>
+                            <div class="text-[#686868] font-semibold text-base">
+                              {{ testimonial.designation }}
+                            </div>
+                            <div class="text-[#686868] font-semibold text-base">
+                              {{ testimonial.testimonialsFor }}
+                            </div>
+                            <div class="flex items-center justify-center gap-2">
+                              <button
+                                (click)="editTestimonial(testimonial)"
+                                class="flex items-center justify-center w-8 h-8 rounded-full bg-primary-blue hover:bg-[#0385b5] transition-colors"
+                                title="Edit testimonial"
+                              >
+                                <svg
+                                  width="16"
+                                  height="16"
+                                  viewBox="0 0 20 20"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M19.1479 1.6403L19.125 1.61947C18.6877 1.21997 18.1208 0.999756 17.5288 0.999756C16.8651 0.999756 16.2278 1.28094 15.7804 1.77073L7.32001 11.0332C7.24283 11.1176 7.18429 11.2173 7.14822 11.3257L6.15337 14.3079C6.03829 14.6527 6.09608 15.0341 6.30783 15.3279C6.52106 15.624 6.86494 15.801 7.22743 15.801C7.38422 15.801 7.53746 15.7687 7.68274 15.7052L10.5632 14.4451C10.6679 14.3992 10.7619 14.332 10.839 14.2476L19.2994 4.98513C20.1798 4.0213 20.1119 2.52095 19.1479 1.6403ZM8.05939 13.7571L8.64319 12.0071L8.69243 11.9531L9.79881 12.9637L9.74961 13.0176L8.05939 13.7571ZM18.0932 3.88324L10.9007 11.7574L9.79433 10.7469L16.9867 2.87265C17.1274 2.71868 17.3199 2.63372 17.5288 2.63372C17.7121 2.63372 17.8876 2.70195 18.0234 2.82594L18.0463 2.84677C18.3449 3.11967 18.3659 3.58458 18.0932 3.88324Z"
+                                    fill="white"
+                                  />
+                                  <path
+                                    d="M17.5065 8.53628C17.0553 8.53628 16.6896 8.90199 16.6896 9.35316V16.2885C16.6896 17.434 15.7576 18.366 14.6121 18.366H4.71133C3.56577 18.366 2.63379 17.434 2.63379 16.2885V6.46809C2.63379 5.32253 3.56587 4.39055 4.71133 4.39055H11.8775C12.3287 4.39055 12.6944 4.02484 12.6944 3.57368C12.6944 3.12251 12.3287 2.7568 11.8775 2.7568H4.71133C2.66477 2.7568 1 4.42157 1 6.46809V16.2884C1 18.3349 2.66487 19.9997 4.71133 19.9997H14.612C16.6585 19.9997 18.3233 18.3348 18.3233 16.2884V9.35316C18.3234 8.90199 17.9576 8.53628 17.5065 8.53628Z"
+                                    fill="white"
+                                  />
+                                </svg>
+                              </button>
+                              <button
+                                (click)="deleteTestimonial(testimonial.id)"
+                                class="flex items-center justify-center w-8 h-8 rounded-full bg-[#BF0505] hover:bg-red-700 transition-colors"
+                                title="Delete testimonial"
+                              >
+                                <svg
+                                  width="16"
+                                  height="16"
+                                  viewBox="0 0 20 20"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M15.8335 5.8335C15.6125 5.8335 15.4005 5.92129 15.2442 6.07757C15.088 6.23385 15.0002 6.44582 15.0002 6.66683V15.9927C14.9763 16.4141 14.7868 16.809 14.4731 17.0913C14.1593 17.3737 13.7467 17.5206 13.3252 17.5002H6.67516C6.25358 17.5206 5.84098 17.3737 5.52725 17.0913C5.21352 16.809 5.02407 16.4141 5.00016 15.9927V6.66683C5.00016 6.44582 4.91237 6.23385 4.75608 6.07757C4.5998 5.92129 4.38784 5.8335 4.16683 5.8335C3.94582 5.8335 3.73385 5.92129 3.57757 6.07757C3.42129 6.23385 3.3335 6.44582 3.3335 6.66683V15.9927C3.35728 16.8562 3.72231 17.6751 4.34865 18.27C4.97498 18.865 5.81156 19.1874 6.67516 19.1668H13.3252C14.1888 19.1874 15.0253 18.865 15.6517 18.27C16.278 17.6751 16.643 16.8562 16.6668 15.9927V6.66683C16.6668 6.44582 16.579 6.23385 16.4228 6.07757C16.2665 5.92129 16.0545 5.8335 15.8335 5.8335Z"
+                                    fill="white"
+                                  />
+                                  <path
+                                    d="M16.6667 3.3335H13.3333V1.66683C13.3333 1.44582 13.2455 1.23385 13.0893 1.07757C12.933 0.921293 12.721 0.833496 12.5 0.833496H7.5C7.27899 0.833496 7.06702 0.921293 6.91074 1.07757C6.75446 1.23385 6.66667 1.44582 6.66667 1.66683V3.3335H3.33333C3.11232 3.3335 2.90036 3.42129 2.74408 3.57757C2.5878 3.73385 2.5 3.94582 2.5 4.16683C2.5 4.38784 2.5878 4.5998 2.74408 4.75609C2.90036 4.91237 3.11232 5.00016 3.33333 5.00016H16.6667C16.8877 5.00016 17.0996 4.91237 17.2559 4.75609C17.4122 4.5998 17.5 4.38784 17.5 4.16683C17.5 3.94582 17.4122 3.73385 17.2559 3.57757C17.0996 3.42129 16.8877 3.3335 16.6667 3.3335ZM8.33333 3.3335V2.50016H11.6667V3.3335H8.33333Z"
+                                    fill="white"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -3644,7 +3720,7 @@ export class EventSetupComponent implements OnInit {
   information: Information[] = [];
   sponsors: Sponsor[] = [];
   socialMediaList: SocialMediaEntry[] = [];
-  testimonialsList: any[] = [];
+  testimonialsList: Testimonial[] = [];
   galleryImages: GalleryImage[] = [];
   searchQuery: string = "";
   editMode = false;
@@ -3837,6 +3913,7 @@ export class EventSetupComponent implements OnInit {
     private sponsorService: SponsorService,
     private socialMediaService: SocialMediaService,
     private imageGalleryService: ImageGalleryService,
+    private testimonialService: TestimonialService,
   ) {}
 
   getSafeHtml(html: string): SafeHtml {
@@ -3859,6 +3936,7 @@ export class EventSetupComponent implements OnInit {
     this.loadInformation();
     this.loadSponsors();
     this.loadSocialMedia();
+    this.loadTestimonials();
     this.loadGalleryImages();
 
     this.updateActiveRoute();
@@ -4231,12 +4309,8 @@ export class EventSetupComponent implements OnInit {
       this.socialMediaService.deleteSocialMedia(this.socialMediaToDelete);
       this.loadSocialMedia();
     } else if (this.testimonialToDelete) {
-      const index = this.testimonialsList.findIndex(
-        (t) => t.id === this.testimonialToDelete,
-      );
-      if (index > -1) {
-        this.testimonialsList.splice(index, 1);
-      }
+      this.testimonialService.deleteTestimonial(this.testimonialToDelete);
+      this.loadTestimonials();
     } else if (this.galleryImageToDelete) {
       this.imageGalleryService.deleteGalleryImage(this.galleryImageToDelete);
       this.loadGalleryImages();
@@ -4446,6 +4520,10 @@ export class EventSetupComponent implements OnInit {
     );
   }
 
+  loadTestimonials() {
+    this.testimonialsList = this.testimonialService.getAllTestimonials();
+  }
+
   loadGalleryImages() {
     this.galleryImages = this.imageGalleryService.getGalleryImagesByEvent(
       this.eventId,
@@ -4498,9 +4576,9 @@ export class EventSetupComponent implements OnInit {
     this.isTestimonialsModalOpen = true;
   }
 
-  editTestimonial(testimonial: any) {
+  editTestimonial(testimonial: Testimonial) {
     this.editModeTestimonials = true;
-    this.editingTestimonial = testimonial;
+    this.editingTestimonial = { ...testimonial };
     this.isTestimonialsModalOpen = true;
   }
 
@@ -4511,22 +4589,31 @@ export class EventSetupComponent implements OnInit {
   }
 
   onTestimonialsSave(testimonialData: any) {
-    if (this.editModeTestimonials && this.editingTestimonial) {
-      const index = this.testimonialsList.findIndex(
-        (t) => t.id === this.editingTestimonial.id,
-      );
-      if (index > -1) {
-        this.testimonialsList[index] = {
-          ...this.testimonialsList[index],
-          ...testimonialData,
-        };
-      }
-    } else {
-      this.testimonialsList.push({
-        id: Date.now().toString(),
-        ...testimonialData,
-      });
+    // Validate required fields to prevent empty entries
+    if (!testimonialData.firstName?.trim() || !testimonialData.company?.trim() || !testimonialData.designation?.trim()) {
+      console.warn('Testimonial data incomplete, cannot save.');
+      return;
     }
+
+    const formData: TestimonialFormData = {
+      firstName: (testimonialData.firstName || '').trim(),
+      lastName: (testimonialData.lastName || '').trim(),
+      company: (testimonialData.company || '').trim(),
+      designation: (testimonialData.designation || '').trim(),
+      isExhibitor: testimonialData.isExhibitor || false,
+      testimonialsFor: (testimonialData.testimonialsFor || '').trim(),
+      message: (testimonialData.message || '').trim(),
+      profileImage: testimonialData.profileImage || null,
+      profilePreview: testimonialData.profilePreview || null,
+    };
+
+    if (this.editModeTestimonials && this.editingTestimonial) {
+      this.testimonialService.updateTestimonial(this.editingTestimonial.id, formData);
+    } else {
+      this.testimonialService.addTestimonial(formData);
+    }
+
+    this.loadTestimonials();
     this.closeTestimonialsModal();
   }
 
